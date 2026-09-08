@@ -1,0 +1,13 @@
+REVOKE ALL ON FUNCTION public.handle_new_user() FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.prevent_status_self_change() FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.update_updated_at_column() FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.has_role(uuid, public.app_role) FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.is_admin() FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.is_approved() FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.owns_business(uuid) FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.is_public_business(uuid) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.has_role(uuid, public.app_role) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.is_admin() TO authenticated;
+GRANT EXECUTE ON FUNCTION public.is_approved() TO authenticated;
+GRANT EXECUTE ON FUNCTION public.owns_business(uuid) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.is_public_business(uuid) TO anon, authenticated;
