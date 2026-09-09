@@ -1,24 +1,81 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Button } from "@/components/ui/button";
+import { Brand } from "@/components/AppShell";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
-  component: Index,
+  head: () => ({
+    meta: [
+      { title: "FLOWORA — Managed digital portfolios for local businesses" },
+      {
+        name: "description",
+        content:
+          "FLOWORA designs, hosts and manages a complete digital portfolio for your business: services, offers, opening hours, contact links and a QR code.",
+      },
+      { property: "og:title", content: "FLOWORA — Managed digital portfolios" },
+      {
+        property: "og:description",
+        content:
+          "A managed-service platform: FLOWORA builds and maintains your business portfolio page and QR code.",
+      },
+    ],
+  }),
+  component: Landing,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
+function Landing() {
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
+    <div className="min-h-screen bg-background">
+      <header className="mx-auto flex max-w-6xl items-center justify-between px-4 py-5">
+        <Brand />
+        <Button asChild size="sm">
+          <Link to="/auth">Sign in</Link>
+        </Button>
+      </header>
+
+      <section className="mx-auto max-w-6xl px-4 pb-20 pt-16 sm:pt-24">
+        <p className="text-sm font-medium uppercase tracking-[0.2em] text-primary">
+          Managed service
+        </p>
+        <h1 className="mt-4 max-w-3xl text-4xl font-bold leading-tight sm:text-6xl">
+          Your business, presented properly — built and maintained by FLOWORA.
+        </h1>
+        <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
+          Every approved business gets a permanent public page with services, prices, offers,
+          opening hours, photos, contact links and a printable QR code. No setup, no dashboards to
+          learn.
+        </p>
+        <div className="mt-8 flex flex-wrap gap-3">
+          <Button asChild size="lg">
+            <Link to="/auth">Access your portal</Link>
+          </Button>
+        </div>
+
+        <div className="mt-20 grid gap-4 sm:grid-cols-3">
+          {[
+            {
+              t: "Reviewed, then published",
+              d: "FLOWORA approves every business before its page goes live.",
+            },
+            {
+              t: "A permanent link",
+              d: "Your address never changes, even when you update your information.",
+            },
+            {
+              t: "QR code & insights",
+              d: "Print your QR code and see how many people view and contact you.",
+            },
+          ].map((f) => (
+            <div key={f.t} className="surface p-6">
+              <h2 className="text-lg font-semibold">{f.t}</h2>
+              <p className="mt-2 text-sm text-muted-foreground">{f.d}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <footer className="border-t border-border/70 py-8 text-center text-xs text-muted-foreground">
+        © {new Date().getFullYear()} FLOWORA
+      </footer>
     </div>
   );
 }
