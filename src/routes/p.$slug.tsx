@@ -67,11 +67,12 @@ function PublicProfile() {
     <div className="min-h-screen bg-background pb-16">
       <div className="relative h-48 w-full overflow-hidden bg-secondary sm:h-64">
         <Media path={business.cover_url} alt={business.business_name} className="h-full w-full object-cover" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-background to-transparent" />
       </div>
 
       <div className="mx-auto max-w-3xl px-4">
-        <div className="-mt-12 flex items-end gap-4">
-          <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-2xl border border-border bg-card">
+        <div className="mt-4 flex items-end gap-4">
+          <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-2xl border border-border bg-card shadow-lg ring-1 ring-border/60">
             <Media
               path={business.logo_url}
               alt={`${business.business_name} logo`}
