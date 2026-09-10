@@ -127,7 +127,7 @@ export function PortfolioEditor({
               <div className="flex gap-2">
                 <Input
                   value={form.slug}
-                  disabled={readOnly || !canPublish}
+                  disabled={readOnly}
                   onChange={(e) => set("slug", slugify(e.target.value))}
                 />
               </div>
@@ -189,9 +189,7 @@ export function PortfolioEditor({
             <div>
               <p className="font-medium">Published</p>
               <p className="text-xs text-muted-foreground">
-                {canPublish
-                  ? "Published portfolios are visible to the public."
-                  : "Only FLOWORA can publish or unpublish a portfolio."}
+                Published portfolios are visible to everyone at your public link.
               </p>
             </div>
             <Switch
