@@ -60,11 +60,15 @@ function AdminPage() {
   return (
     <AppShell title="Admin console">
       <h1 className="mb-6 text-2xl font-bold">Admin console</h1>
-      <Tabs defaultValue="users">
+      <Tabs defaultValue="overview">
         <TabsList>
+          <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="users">Users</TabsTrigger>
           <TabsTrigger value="businesses">Portfolios</TabsTrigger>
         </TabsList>
+        <TabsContent value="overview" className="mt-6">
+          <OverviewPanel />
+        </TabsContent>
         <TabsContent value="users" className="mt-6">
           <UsersPanel />
         </TabsContent>
