@@ -421,3 +421,153 @@ function BusinessesPanel() {
     </div>
   );
 }
+
+function OverviewPanel() {
+  const { data: users } = useQuery({
+    queryKey: ["admin-users"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("id, email, full_name, status, created_at")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const { data: businesses } = useQuery({
+    queryKey: ["admin-businesses"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("business_profiles")
+        .select("id, business_name, slug, published, user_id")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const { data: events } = useQuery({
+    queryKey: ["admin-analytics"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("analytics")
+        .select("business_id, event_type, created_at")
+        .order("created_at", { ascending: false })
+        .limit(5000);
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const rows = events ?? [];
+  const since = Date.now() - 30 * 864e5;
+  const recent = rows.filter((r) => new Date(r.created_at).getTime() > since);
+  const views = rows.filter((r) => r.event_type === "page_view").length;
+  const contacts = rows.filter((r) => r.event_type !== "page_view").length;
+
+  const days = Array.from({ length: 14 }, (_, i) => {
+    const d = new Date(Date.now() - (13 - i) * 864e5);
+    const key = d.toISOString().slice(0, 10);
+    return {
+      day: key.slice(5),
+      views: rows.filter(
+        (r) => r.event_type === "page_view" && r.created_at.slice(0, 10) === key,
+      ).length,
+    };
+  });
+
+  const perBusiness = (businesses ?? [])
+    .map((b) => ({
+      ...b,
+      views: rows.filter((r) => r.business_id === b.id && r.event_type === "page_view").length,
+    }))
+    .sort((a, b) => b.views - a.views)
+    .slice(0, 6);
+
+  const byStatus = (s: string) => (users ?? []).filter((u) => u.status === s).length;
+
+  return (
+    <div className="space-y-6">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StatCard label="Users" value={(users ?? []).length} hint={`${byStatus("approved")} active`} />
+        <StatCard
+          label="Portfolios"
+          value={(businesses ?? []).length}
+          hint={`${(businesses ?? []).filter((b) => b.published).length} published`}
+        />
+        <StatCard label="Page views" value={views} hint={`${recent.length} events in 30 days`} />
+        <StatCard label="Contact actions" value={contacts} hint="calls, WhatsApp, maps, website" />
+      </div>
+
+      <div className="surface p-5">
+        <h2 className="text-lg font-semibold">Page views — last 14 days</h2>
+        <div className="mt-4 h-64">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={days}>
+              <defs>
+                <linearGradient id="viewsFill" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="var(--color-primary)" stopOpacity={0.5} />
+                  <stop offset="100%" stopColor="var(--color-primary)" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
+              <XAxis dataKey="day" stroke="var(--color-muted-foreground)" fontSize={12} />
+              <YAxis allowDecimals={false} stroke="var(--color-muted-foreground)" fontSize={12} />
+              <Tooltip
+                contentStyle={{
+                  background: "var(--color-card)",
+                  border: "1px solid var(--color-border)",
+                  borderRadius: 12,
+                }}
+              />
+              <Area
+                type="monotone"
+                dataKey="views"
+                stroke="var(--color-primary)"
+                strokeWidth={2}
+                fill="url(#viewsFill)"
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div className="surface p-5">
+        <h2 className="text-lg font-semibold">Most viewed portfolios</h2>
+        <div className="mt-4 space-y-2">
+          {perBusiness.map((b) => (
+            <div
+              key={b.id}
+              className="flex items-center justify-between border-b border-border/60 pb-2 text-sm"
+            >
+              <div>
+                <p className="font-medium">{b.business_name}</p>
+                <p className="text-xs text-muted-foreground">/p/{b.slug}</p>
+              </div>
+              <div className="flex items-center gap-3">
+                <Badge variant="secondary" className={b.published ? "bg-primary/15 text-primary" : ""}>
+                  {b.published ? "Published" : "Draft"}
+                </Badge>
+                <span className="font-display text-lg text-primary">{b.views}</span>
+              </div>
+            </div>
+          ))}
+          {perBusiness.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No portfolios yet.</p>
+          ) : null}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function StatCard({ label, value, hint }: { label: string; value: number; hint?: string }) {
+  return (
+    <div className="surface p-5">
+      <p className="text-xs uppercase tracking-wide text-muted-foreground">{label}</p>
+      <p className="mt-2 font-display text-3xl font-bold text-primary">{value}</p>
+      {hint ? <p className="mt-1 text-xs text-muted-foreground">{hint}</p> : null}
+    </div>
+  );
+}
