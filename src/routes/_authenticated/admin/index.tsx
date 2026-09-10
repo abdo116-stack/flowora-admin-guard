@@ -18,6 +18,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import { adminCreateUser, adminDeleteUser } from "@/lib/admin.functions";
 import { slugify, STATUS_LABEL, type UserStatus } from "@/lib/floword";
 
