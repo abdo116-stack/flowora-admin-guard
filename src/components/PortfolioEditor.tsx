@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Media } from "@/components/Media";
-import { DAYS, slugify, uploadMedia } from "@/lib/floword";
+import { DAYS, publicPortfolioUrl, slugify, uploadMedia } from "@/lib/floword";
 
 type Business = {
   id: string;
@@ -100,7 +100,7 @@ export function PortfolioEditor({
     setForm({ ...form, [key]: value });
 
   const publicUrl =
-    typeof window !== "undefined" ? `${window.location.origin}/p/${form.slug}` : `/p/${form.slug}`;
+    publicPortfolioUrl(form.slug);
 
   return (
     <Tabs defaultValue="details" className="w-full">
@@ -610,7 +610,7 @@ function OffersPanel({ businessId, readOnly }: { businessId: string; readOnly: b
 function SharePanel({ businessId, slug }: { businessId: string; slug: string }) {
   const [qr, setQr] = useState<string | null>(null);
   const url = useMemo(
-    () => (typeof window !== "undefined" ? `${window.location.origin}/p/${slug}` : `/p/${slug}`),
+    () => publicPortfolioUrl(slug),
     [slug],
   );
 
@@ -654,7 +654,7 @@ function SharePanel({ businessId, slug }: { businessId: string; slug: string }) 
             <img src={qr} alt={`QR code for ${slug}`} className="h-48 w-48 rounded-lg bg-white p-2" />
             <div className="flex gap-2">
               <Button asChild variant="outline" size="sm">
-                <a href={qr} download={`flowora-${slug}-qr.png`}>
+                <a href={qr} download={`tapro-${slug}-qr.png`}>
                   Download QR
                 </a>
               </Button>

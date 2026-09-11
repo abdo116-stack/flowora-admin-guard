@@ -7,10 +7,10 @@ import { Button } from "@/components/ui/button";
 export const Route = createFileRoute("/_authenticated/admin/business/$id")({
   head: () => ({
     meta: [
-      { title: "Edit portfolio — FLOWORA admin" },
-      { name: "description", content: "Edit a FLOWORA business portfolio." },
-      { property: "og:title", content: "Edit portfolio — FLOWORA admin" },
-      { property: "og:description", content: "Edit a FLOWORA business portfolio." },
+      { title: "Edit portfolio — Tapro admin" },
+      { name: "description", content: "Edit a Tapro business portfolio." },
+      { property: "og:title", content: "Edit portfolio — Tapro admin" },
+      { property: "og:description", content: "Edit a Tapro business portfolio." },
     ],
   }),
   component: AdminBusiness,

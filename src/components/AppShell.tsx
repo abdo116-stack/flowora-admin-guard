@@ -8,7 +8,7 @@ import type { ReactNode } from "react";
 export function Brand({ className = "" }: { className?: string }) {
   return (
     <Link to="/" className={`font-display text-xl font-bold tracking-tight ${className}`}>
-      FLOW<span className="text-primary">ORA</span>
+      TAP<span className="text-primary">RO</span>
     </Link>
   );
 }

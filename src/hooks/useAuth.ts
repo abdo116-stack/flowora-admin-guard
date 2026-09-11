@@ -10,7 +10,7 @@ export type AuthState = {
   isAdmin: boolean;
 } | null;
 
-export const authQueryKey = ["flowora-auth"];
+export const authQueryKey = ["tapro-auth"];
 
 export async function fetchAuthState(): Promise<AuthState> {
   const { data } = await supabase.auth.getUser();

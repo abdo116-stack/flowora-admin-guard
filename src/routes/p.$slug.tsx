@@ -4,7 +4,7 @@ import { getPublicBusiness } from "@/lib/public.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { Media } from "@/components/Media";
 import { Button } from "@/components/ui/button";
-import { DAYS } from "@/lib/floword";
+import { DAYS, publicPortfolioUrl } from "@/lib/floword";
 
 export const Route = createFileRoute("/p/$slug")({
   loader: async ({ params }) => {
@@ -16,13 +16,16 @@ export const Route = createFileRoute("/p/$slug")({
     const name = loaderData?.business?.business_name ?? "Business";
     const desc =
       loaderData?.business?.description?.slice(0, 155) ??
-      `${name} on FLOWORA: services, offers, opening hours and contact details.`;
+      `${name} on Tapro: services, offers, opening hours and contact details.`;
     return {
       meta: [
-        { title: `${name} — FLOWORA` },
+        { title: `${name} — Tapro` },
         { name: "description", content: desc },
-        { property: "og:title", content: `${name} — FLOWORA` },
+        { property: "og:title", content: `${name} — Tapro` },
         { property: "og:description", content: desc },
+        { property: "og:type", content: "website" },
+        { name: "twitter:card", content: "summary_large_image" },
+        { property: "og:url", content: publicPortfolioUrl(loaderData?.business?.slug ?? "") },
       ],
     };
   },
@@ -42,7 +45,7 @@ export const Route = createFileRoute("/p/$slug")({
           This portfolio does not exist or is not published yet.
         </p>
         <Link to="/" className="mt-4 inline-block text-primary hover:underline">
-          Go to FLOWORA
+          Go to Tapro
         </Link>
       </div>
     </div>
@@ -226,7 +229,7 @@ function PublicProfile() {
         <footer className="mt-16 border-t border-border/70 pt-6 text-center text-xs text-muted-foreground">
           Powered by{" "}
           <Link to="/" className="text-primary hover:underline">
-            FLOWORA
+            Tapro
           </Link>
         </footer>
       </div>

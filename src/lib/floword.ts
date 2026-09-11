@@ -48,3 +48,11 @@ export const DAYS = [
   "saturday",
   "sunday",
 ] as const;
+
+export const SITE_URL = (
+  (import.meta.env["VITE_PUBLIC_SITE_URL"] as string | undefined) ?? "https://tapro.netlify.app"
+).replace(/\/+$/, "");
+
+export function publicPortfolioUrl(slug: string): string {
+  return `${SITE_URL}/p/${slug}`;
+}
