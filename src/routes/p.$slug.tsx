@@ -8,7 +8,15 @@ import { DAYS, publicPortfolioUrl } from "@/lib/floword";
 
 export const Route = createFileRoute("/p/$slug")({
   loader: async ({ params }) => {
-    const data = await getPublicBusiness({ data: { slug: params.slug } });
+    let data: Awaited<ReturnType<typeof getPublicBusiness>> = null;
+    try {
+      data = await getPublicBusiness({ data: { slug: params.slug } });
+    } catch {
+      // Server-side fetch unavailable (e.g. missing server config on a static host):
+      // fall back to a direct public read from the browser.
+      if (typeof window === "undefined") throw notFound();
+      data = await loadPublicBusinessFromBrowser(params.slug);
+    }
     if (!data) throw notFound();
     return data;
   },
@@ -52,6 +60,24 @@ export const Route = createFileRoute("/p/$slug")({
   ),
   component: PublicProfile,
 });
+
+async function loadPublicBusinessFromBrowser(slug: string) {
+  const { data: business } = await supabase
+    .from("business_profiles")
+    .select(
+      "id, business_name, slug, logo_url, cover_url, description, phone, whatsapp, email, website, instagram, facebook, tiktok, google_maps_url, address, opening_hours, published",
+    )
+    .eq("slug", slug)
+    .eq("published", true)
+    .maybeSingle();
+  if (!business) return null;
+  const [{ data: services }, { data: gallery }, { data: offers }] = await Promise.all([
+    supabase.from("services").select("id, name, description, price, image_url").eq("business_id", business.id),
+    supabase.from("gallery").select("id, image_url, caption").eq("business_id", business.id),
+    supabase.from("offers").select("id, title, description, price, valid_until").eq("business_id", business.id),
+  ]);
+  return { business, services: services ?? [], gallery: gallery ?? [], offers: offers ?? [] };
+}
 
 function PublicProfile() {
   const { business, services, gallery, offers } = Route.useLoaderData();
