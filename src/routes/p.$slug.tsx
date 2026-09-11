@@ -8,7 +8,15 @@ import { DAYS, publicPortfolioUrl } from "@/lib/floword";
 
 export const Route = createFileRoute("/p/$slug")({
   loader: async ({ params }) => {
-    const data = await getPublicBusiness({ data: { slug: params.slug } });
+    let data: Awaited<ReturnType<typeof getPublicBusiness>> = null;
+    try {
+      data = await getPublicBusiness({ data: { slug: params.slug } });
+    } catch {
+      // Server-side fetch unavailable (e.g. missing server config on a static host):
+      // fall back to a direct public read from the browser.
+      if (typeof window === "undefined") throw notFound();
+      data = await loadPublicBusinessFromBrowser(params.slug);
+    }
     if (!data) throw notFound();
     return data;
   },
