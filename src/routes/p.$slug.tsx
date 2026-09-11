@@ -4,7 +4,7 @@ import { getPublicBusiness } from "@/lib/public.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { Media } from "@/components/Media";
 import { Button } from "@/components/ui/button";
-import { DAYS } from "@/lib/floword";
+import { DAYS, publicPortfolioUrl } from "@/lib/floword";
 
 export const Route = createFileRoute("/p/$slug")({
   loader: async ({ params }) => {
@@ -23,6 +23,9 @@ export const Route = createFileRoute("/p/$slug")({
         { name: "description", content: desc },
         { property: "og:title", content: `${name} — Tapro` },
         { property: "og:description", content: desc },
+        { property: "og:type", content: "website" },
+        { name: "twitter:card", content: "summary_large_image" },
+        { property: "og:url", content: publicPortfolioUrl(loaderData?.business?.slug ?? "") },
       ],
     };
   },

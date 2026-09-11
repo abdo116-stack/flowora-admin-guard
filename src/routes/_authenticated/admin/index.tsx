@@ -28,7 +28,7 @@ import {
   YAxis,
 } from "recharts";
 import { adminCreateUser, adminDeleteUser } from "@/lib/admin.functions";
-import { publicPortfolioUrl, slugify, STATUS_LABEL, type UserStatus } from "@/lib/floword";
+import { publicPortfolioUrl, SITE_URL, slugify, STATUS_LABEL, type UserStatus } from "@/lib/floword";
 
 export const Route = createFileRoute("/_authenticated/admin/")({
   head: () => ({
