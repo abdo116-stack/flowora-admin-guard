@@ -102,7 +102,7 @@ function AuthPage() {
 
         <div className="surface p-6 sm:p-8">
           <h1 className="text-2xl font-bold">
-            {mode === "login" ? "Sign in" : mode === "signup" ? "Request access" : "Reset password"}
+            {mode === "login" ? "Sign in" : mode === "signup" ? "Create account" : "Reset password"}
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {mode === "login"
@@ -160,7 +160,7 @@ function AuthPage() {
                 : mode === "login"
                   ? "Login"
                   : mode === "signup"
-                    ? "Request access"
+                    ? "Create account"
                     : "Send reset link"}
             </Button>
           </form>
