@@ -5,17 +5,17 @@ import { Brand } from "@/components/AppShell";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "FLOWORA — Managed digital portfolios for local businesses" },
+      { title: "Tapro — Managed digital portfolios for local businesses" },
       {
         name: "description",
         content:
-          "FLOWORA designs, hosts and manages a complete digital portfolio for your business: services, offers, opening hours, contact links and a QR code.",
+          "Tapro designs, hosts and manages a complete digital portfolio for your business: services, offers, opening hours, contact links and a QR code.",
       },
-      { property: "og:title", content: "FLOWORA — Managed digital portfolios" },
+      { property: "og:title", content: "Tapro — Managed digital portfolios" },
       {
         property: "og:description",
         content:
-          "A managed-service platform: FLOWORA builds and maintains your business portfolio page and QR code.",
+          "A managed-service platform: Tapro builds and maintains your business portfolio page and QR code.",
       },
     ],
   }),
@@ -37,7 +37,7 @@ function Landing() {
           Managed service
         </p>
         <h1 className="mt-4 max-w-3xl text-4xl font-bold leading-tight sm:text-6xl">
-          Your business, presented properly — built and maintained by FLOWORA.
+          Your business, presented properly — built and maintained by Tapro.
         </h1>
         <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
           Every approved business gets a permanent public page with services, prices, offers,
@@ -54,7 +54,7 @@ function Landing() {
           {[
             {
               t: "Reviewed, then published",
-              d: "FLOWORA approves every business before its page goes live.",
+              d: "Tapro approves every business before its page goes live.",
             },
             {
               t: "A permanent link",
@@ -74,7 +74,7 @@ function Landing() {
       </section>
 
       <footer className="border-t border-border/70 py-8 text-center text-xs text-muted-foreground">
-        © {new Date().getFullYear()} FLOWORA
+        © {new Date().getFullYear()} Tapro
       </footer>
     </div>
   );

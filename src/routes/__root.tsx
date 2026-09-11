@@ -79,17 +79,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "FLOWORA — Managed business portfolios" },
+      { title: "Tapro — Managed business portfolios" },
       {
         name: "description",
         content:
-          "FLOWORA builds and manages digital business portfolios: services, offers, hours, contact links and QR codes.",
+          "Tapro builds and manages digital business portfolios: services, offers, hours, contact links and QR codes.",
       },
-      { name: "author", content: "FLOWORA" },
-      { property: "og:title", content: "FLOWORA — Managed business portfolios" },
+      { name: "author", content: "Tapro" },
+      { property: "og:title", content: "Tapro — Managed business portfolios" },
       {
         property: "og:description",
-        content: "Managed digital portfolios for local businesses, operated by FLOWORA.",
+        content: "Managed digital portfolios for local businesses, operated by Tapro.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

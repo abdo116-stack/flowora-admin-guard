@@ -16,12 +16,12 @@ export const Route = createFileRoute("/p/$slug")({
     const name = loaderData?.business?.business_name ?? "Business";
     const desc =
       loaderData?.business?.description?.slice(0, 155) ??
-      `${name} on FLOWORA: services, offers, opening hours and contact details.`;
+      `${name} on Tapro: services, offers, opening hours and contact details.`;
     return {
       meta: [
-        { title: `${name} — FLOWORA` },
+        { title: `${name} — Tapro` },
         { name: "description", content: desc },
-        { property: "og:title", content: `${name} — FLOWORA` },
+        { property: "og:title", content: `${name} — Tapro` },
         { property: "og:description", content: desc },
       ],
     };
@@ -42,7 +42,7 @@ export const Route = createFileRoute("/p/$slug")({
           This portfolio does not exist or is not published yet.
         </p>
         <Link to="/" className="mt-4 inline-block text-primary hover:underline">
-          Go to FLOWORA
+          Go to Tapro
         </Link>
       </div>
     </div>
@@ -226,7 +226,7 @@ function PublicProfile() {
         <footer className="mt-16 border-t border-border/70 pt-6 text-center text-xs text-muted-foreground">
           Powered by{" "}
           <Link to="/" className="text-primary hover:underline">
-            FLOWORA
+            Tapro
           </Link>
         </footer>
       </div>

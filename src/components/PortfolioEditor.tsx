@@ -654,7 +654,7 @@ function SharePanel({ businessId, slug }: { businessId: string; slug: string }) 
             <img src={qr} alt={`QR code for ${slug}`} className="h-48 w-48 rounded-lg bg-white p-2" />
             <div className="flex gap-2">
               <Button asChild variant="outline" size="sm">
-                <a href={qr} download={`flowora-${slug}-qr.png`}>
+                <a href={qr} download={`tapro-${slug}-qr.png`}>
                   Download QR
                 </a>
               </Button>

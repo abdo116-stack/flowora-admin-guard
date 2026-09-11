@@ -14,12 +14,12 @@ import { slugify } from "@/lib/floword";
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
     meta: [
-      { title: "Business dashboard — FLOWORA" },
-      { name: "description", content: "Create, edit and publish your FLOWORA business portfolio." },
-      { property: "og:title", content: "Business dashboard — FLOWORA" },
+      { title: "Business dashboard — Tapro" },
+      { name: "description", content: "Create, edit and publish your Tapro business portfolio." },
+      { property: "og:title", content: "Business dashboard — Tapro" },
       {
         property: "og:description",
-        content: "Create, edit and publish your FLOWORA business portfolio.",
+        content: "Create, edit and publish your Tapro business portfolio.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -31,11 +31,11 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 const DENIED: Record<string, { title: string; body: string }> = {
   rejected: {
     title: "Access denied",
-    body: "Your account was rejected. Contact FLOWORA if you think this is a mistake.",
+    body: "Your account was rejected. Contact Tapro if you think this is a mistake.",
   },
   suspended: {
     title: "Account suspended",
-    body: "Your access has been suspended by FLOWORA. Contact us to restore your account.",
+    body: "Your access has been suspended by Tapro. Contact us to restore your account.",
   },
   pending: {
     title: "Your account is being reviewed",
@@ -93,7 +93,7 @@ function Dashboard() {
     return (
       <AppShell title="Dashboard">
         <div className="surface p-6">
-          <h1 className="text-xl font-semibold">You're signed in as the FLOWORA administrator</h1>
+          <h1 className="text-xl font-semibold">You're signed in as the Tapro administrator</h1>
           <Button asChild className="mt-4">
             <Link to="/admin">Go to admin console</Link>
           </Button>

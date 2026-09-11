@@ -11,15 +11,15 @@ import { Brand } from "@/components/AppShell";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Sign in — FLOWORA portal" },
+      { title: "Sign in — Tapro portal" },
       {
         name: "description",
-        content: "Sign in to the FLOWORA portal to manage your business portfolio.",
+        content: "Sign in to the Tapro portal to manage your business portfolio.",
       },
-      { property: "og:title", content: "Sign in — FLOWORA portal" },
+      { property: "og:title", content: "Sign in — Tapro portal" },
       {
         property: "og:description",
-        content: "Secure email and password sign-in for FLOWORA business owners and administrators.",
+        content: "Secure email and password sign-in for Tapro business owners and administrators.",
       },
     ],
   }),
@@ -70,7 +70,7 @@ function AuthPage() {
           },
         });
         if (error) throw error;
-        toast.success("Account requested. Confirm your email, then wait for FLOWORA approval.");
+        toast.success("Account requested. Confirm your email, then wait for Tapro approval.");
         setMode("login");
         return;
       }
@@ -105,9 +105,9 @@ function AuthPage() {
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {mode === "login"
-              ? "Use the email and password provided by FLOWORA."
+              ? "Use the email and password provided by Tapro."
               : mode === "signup"
-                ? "New accounts stay pending until FLOWORA approves them."
+                ? "New accounts stay pending until Tapro approves them."
                 : "We'll email you a secure link to set a new password."}
           </p>
 
@@ -196,7 +196,7 @@ function AuthPage() {
 
         <p className="mt-6 text-center text-xs text-muted-foreground">
           <Link to="/" className="hover:text-foreground">
-            Back to FLOWORA
+            Back to Tapro
           </Link>
         </p>
       </div>

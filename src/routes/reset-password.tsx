@@ -11,10 +11,10 @@ export const Route = createFileRoute("/reset-password")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Set a new password — FLOWORA" },
-      { name: "description", content: "Choose a new password for your FLOWORA portal account." },
-      { property: "og:title", content: "Set a new password — FLOWORA" },
-      { property: "og:description", content: "Securely set a new FLOWORA portal password." },
+      { title: "Set a new password — Tapro" },
+      { name: "description", content: "Choose a new password for your Tapro portal account." },
+      { property: "og:title", content: "Set a new password — Tapro" },
+      { property: "og:description", content: "Securely set a new Tapro portal password." },
     ],
   }),
   component: ResetPassword,

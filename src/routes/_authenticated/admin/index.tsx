@@ -33,10 +33,10 @@ import { slugify, STATUS_LABEL, type UserStatus } from "@/lib/floword";
 export const Route = createFileRoute("/_authenticated/admin/")({
   head: () => ({
     meta: [
-      { title: "Admin console — FLOWORA" },
-      { name: "description", content: "FLOWORA administrator console for users and portfolios." },
-      { property: "og:title", content: "Admin console — FLOWORA" },
-      { property: "og:description", content: "Manage FLOWORA users and business portfolios." },
+      { title: "Admin console — Tapro" },
+      { name: "description", content: "Tapro administrator console for users and portfolios." },
+      { property: "og:title", content: "Admin console — Tapro" },
+      { property: "og:description", content: "Manage Tapro users and business portfolios." },
     ],
   }),
   component: AdminPage,
@@ -59,7 +59,7 @@ function AdminPage() {
         <div className="surface mx-auto max-w-lg p-8 text-center">
           <h1 className="text-2xl font-bold">Access denied</h1>
           <p className="mt-3 text-sm text-muted-foreground">
-            This area is reserved for the FLOWORA administrator.
+            This area is reserved for the Tapro administrator.
           </p>
         </div>
       </AppShell>
