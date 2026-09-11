@@ -49,10 +49,23 @@ export const DAYS = [
   "sunday",
 ] as const;
 
-export const SITE_URL = (
-  (import.meta.env["VITE_PUBLIC_SITE_URL"] as string | undefined) ?? "https://tapro.netlify.app"
-).replace(/\/+$/, "");
+const CONFIGURED_SITE_URL = (
+  import.meta.env["VITE_PUBLIC_SITE_URL"] as string | undefined
+)?.replace(/\/+$/, "");
+
+export const FALLBACK_SITE_URL = "https://tapro.netlify.app";
+
+/** Prefer an explicit site URL, otherwise the origin the app is actually served from. */
+export function siteUrl(): string {
+  if (CONFIGURED_SITE_URL) return CONFIGURED_SITE_URL;
+  if (typeof window !== "undefined" && window.location?.origin) {
+    return window.location.origin.replace(/\/+$/, "");
+  }
+  return FALLBACK_SITE_URL;
+}
+
+export const SITE_URL = siteUrl();
 
 export function publicPortfolioUrl(slug: string): string {
-  return `${SITE_URL}/p/${slug}`;
+  return `${siteUrl()}/p/${slug}`;
 }
