@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Media } from "@/components/Media";
-import { DAYS, slugify, uploadMedia } from "@/lib/floword";
+import { DAYS, publicPortfolioUrl, slugify, uploadMedia } from "@/lib/floword";
 
 type Business = {
   id: string;

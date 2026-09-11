@@ -52,7 +52,7 @@ function AuthPage() {
     try {
       if (mode === "forgot") {
         const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-          redirectTo: `${window.location.origin}/reset-password`,
+          redirectTo: `${SITE_URL}/reset-password`,
         });
         if (error) throw error;
         toast.success("Reset link sent. Check your inbox.");
@@ -65,7 +65,7 @@ function AuthPage() {
           email: email.trim(),
           password,
           options: {
-            emailRedirectTo: window.location.origin,
+            emailRedirectTo: SITE_URL,
             data: { full_name: fullName.trim() },
           },
         });

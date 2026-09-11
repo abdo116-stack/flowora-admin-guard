@@ -9,7 +9,7 @@ import { PortfolioEditor } from "@/components/PortfolioEditor";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { slugify } from "@/lib/floword";
+import { publicPortfolioUrl, slugify } from "@/lib/floword";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
@@ -161,7 +161,7 @@ function Dashboard() {
           </p>
         </div>
         <Button variant="outline" asChild>
-          <a href={`/p/${business.slug}`} target="_blank" rel="noreferrer">
+          <a href={publicPortfolioUrl(business.slug)} target="_blank" rel="noreferrer">
             View public page
           </a>
         </Button>
