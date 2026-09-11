@@ -53,8 +53,8 @@ function Landing() {
         <div className="mt-20 grid gap-4 sm:grid-cols-3">
           {[
             {
-              t: "Reviewed, then published",
-              d: "Tapro approves every business before its page goes live.",
+              t: "Live in minutes",
+              d: "Build your page, then publish it yourself whenever you are ready.",
             },
             {
               t: "A permanent link",

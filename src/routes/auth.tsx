@@ -71,7 +71,7 @@ function AuthPage() {
           },
         });
         if (error) throw error;
-        toast.success("Account requested. Confirm your email, then wait for Tapro approval.");
+        toast.success("Account created. Confirm your email, then sign in to build your portfolio.");
         setMode("login");
         return;
       }
@@ -106,9 +106,9 @@ function AuthPage() {
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {mode === "login"
-              ? "Use the email and password provided by Tapro."
+              ? "Sign in with your email and password."
               : mode === "signup"
-                ? "New accounts stay pending until Tapro approves them."
+                ? "Create an account and start building your portfolio right away."
                 : "We'll email you a secure link to set a new password."}
           </p>
 
