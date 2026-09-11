@@ -100,7 +100,7 @@ export function PortfolioEditor({
     setForm({ ...form, [key]: value });
 
   const publicUrl =
-    typeof window !== "undefined" ? `${window.location.origin}/p/${form.slug}` : `/p/${form.slug}`;
+    publicPortfolioUrl(form.slug);
 
   return (
     <Tabs defaultValue="details" className="w-full">
@@ -610,7 +610,7 @@ function OffersPanel({ businessId, readOnly }: { businessId: string; readOnly: b
 function SharePanel({ businessId, slug }: { businessId: string; slug: string }) {
   const [qr, setQr] = useState<string | null>(null);
   const url = useMemo(
-    () => (typeof window !== "undefined" ? `${window.location.origin}/p/${slug}` : `/p/${slug}`),
+    () => publicPortfolioUrl(slug),
     [slug],
   );
 
