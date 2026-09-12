@@ -26,15 +26,20 @@ function Landing() {
   return (
     <div className="min-h-screen bg-background">
       <header className="mx-auto flex max-w-6xl items-center justify-between px-4 py-5">
-        <Brand />
-        <Button asChild size="sm">
-          <Link to="/auth">Sign in</Link>
-        </Button>
+        <Brand withTagline />
+        <div className="flex items-center gap-2">
+          <Button asChild size="sm" variant="ghost">
+            <Link to="/about">About</Link>
+          </Button>
+          <Button asChild size="sm">
+            <Link to="/auth">Sign in</Link>
+          </Button>
+        </div>
       </header>
 
       <section className="mx-auto max-w-6xl px-4 pb-20 pt-16 sm:pt-24">
         <p className="text-sm font-medium uppercase tracking-[0.2em] text-primary">
-          Managed service
+          Tap once. Show everything.
         </p>
         <h1 className="mt-4 max-w-3xl text-4xl font-bold leading-tight sm:text-6xl">
           Your business, presented properly — built and maintained by Tapro.
@@ -74,7 +79,11 @@ function Landing() {
       </section>
 
       <footer className="border-t border-border/70 py-8 text-center text-xs text-muted-foreground">
-        © {new Date().getFullYear()} Tapro
+        © {new Date().getFullYear()} Tapro ·{" "}
+        <Link to="/about" className="underline hover:text-foreground">
+          About
+        </Link>{" "}
+        · softatlas38@gmail.com · 0681569749
       </footer>
     </div>
   );
