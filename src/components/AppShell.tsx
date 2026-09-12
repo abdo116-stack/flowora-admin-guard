@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import type { ReactNode } from "react";
+import taproLogo from "@/assets/tapro-logo.png.asset.json";
 
 export function Brand({
   className = "",
