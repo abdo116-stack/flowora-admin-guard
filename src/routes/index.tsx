@@ -79,7 +79,11 @@ function Landing() {
       </section>
 
       <footer className="border-t border-border/70 py-8 text-center text-xs text-muted-foreground">
-        © {new Date().getFullYear()} Tapro
+        © {new Date().getFullYear()} Tapro ·{" "}
+        <Link to="/about" className="underline hover:text-foreground">
+          About
+        </Link>{" "}
+        · softatlas38@gmail.com · 0681569749
       </footer>
     </div>
   );
