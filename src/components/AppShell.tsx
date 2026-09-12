@@ -5,10 +5,30 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import type { ReactNode } from "react";
 
-export function Brand({ className = "" }: { className?: string }) {
+export function Brand({
+  className = "",
+  withTagline = false,
+}: {
+  className?: string;
+  withTagline?: boolean;
+}) {
   return (
-    <Link to="/" className={`font-display text-xl font-bold tracking-tight ${className}`}>
-      TAP<span className="text-primary">RO</span>
+    <Link to="/" className={`flex items-center gap-3 ${className}`}>
+      <img
+        src={taproLogo.url}
+        alt="Tapro logo"
+        className="h-9 w-9 rounded-lg object-cover sm:h-10 sm:w-10"
+      />
+      <span className="leading-tight">
+        <span className="block font-display text-xl font-bold tracking-tight">
+          TAP<span className="text-primary">RO</span>
+        </span>
+        {withTagline ? (
+          <span className="block text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+            Tap once. Show everything.
+          </span>
+        ) : null}
+      </span>
     </Link>
   );
 }
