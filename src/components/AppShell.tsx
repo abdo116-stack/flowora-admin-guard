@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import type { ReactNode } from "react";
-import taproLogo from "@/assets/tapro-logo.png.asset.json";
+import taproLogo from "@/assets/tapro-logo.png";
 
 export function Brand({
   className = "",
@@ -16,7 +16,7 @@ export function Brand({
   return (
     <Link to="/" className={`flex items-center gap-3 ${className}`}>
       <img
-        src={taproLogo.url}
+        src={taproLogo}
         alt="Tapro logo"
         className="h-9 w-9 rounded-lg object-cover sm:h-10 sm:w-10"
       />

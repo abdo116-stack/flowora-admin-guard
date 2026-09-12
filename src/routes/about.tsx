@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Brand } from "@/components/AppShell";
-import taproLogo from "@/assets/tapro-logo.png.asset.json";
+import taproLogo from "@/assets/tapro-logo.png";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -39,7 +39,7 @@ function About() {
         <section className="surface overflow-hidden">
           <div className="grid gap-8 p-6 sm:p-10 md:grid-cols-[220px_1fr] md:items-center">
             <img
-              src={taproLogo.url}
+              src={taproLogo}
               alt="Tapro brand mark"
               className="mx-auto w-40 rounded-2xl shadow-lg ring-1 ring-border md:w-full"
             />
