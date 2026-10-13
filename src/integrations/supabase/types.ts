@@ -50,15 +50,20 @@ export type Database = {
           cover_url: string | null
           created_at: string
           description: string | null
+          design: Json
           email: string | null
+          external_review_url: string | null
           facebook: string | null
           google_maps_url: string | null
+          google_review_url: string | null
           id: string
           instagram: string | null
           logo_url: string | null
           opening_hours: Json
           phone: string | null
           published: boolean
+          review_cta: string | null
+          show_review_cta: boolean
           slug: string
           tiktok: string | null
           updated_at: string
@@ -72,15 +77,20 @@ export type Database = {
           cover_url?: string | null
           created_at?: string
           description?: string | null
+          design?: Json
           email?: string | null
+          external_review_url?: string | null
           facebook?: string | null
           google_maps_url?: string | null
+          google_review_url?: string | null
           id?: string
           instagram?: string | null
           logo_url?: string | null
           opening_hours?: Json
           phone?: string | null
           published?: boolean
+          review_cta?: string | null
+          show_review_cta?: boolean
           slug: string
           tiktok?: string | null
           updated_at?: string
@@ -94,15 +104,20 @@ export type Database = {
           cover_url?: string | null
           created_at?: string
           description?: string | null
+          design?: Json
           email?: string | null
+          external_review_url?: string | null
           facebook?: string | null
           google_maps_url?: string | null
+          google_review_url?: string | null
           id?: string
           instagram?: string | null
           logo_url?: string | null
           opening_hours?: Json
           phone?: string | null
           published?: boolean
+          review_cta?: string | null
+          show_review_cta?: boolean
           slug?: string
           tiktok?: string | null
           updated_at?: string
