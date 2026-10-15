@@ -10,6 +10,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Media } from "@/components/Media";
+import { DesignStudio } from "@/components/DesignStudio";
+import { ReviewsPanel } from "@/components/ReviewsPanel";
 import { DAYS, publicPortfolioUrl, slugify, uploadMedia } from "@/lib/floword";
 
 type Business = {
@@ -88,6 +90,7 @@ export function PortfolioEditor({
     },
     onSuccess: () => {
       toast.success("Portfolio saved");
+      void queryClient.invalidateQueries({ queryKey: ["design-preview", businessId] });
       void queryClient.invalidateQueries({ queryKey: ["business", businessId] });
       void queryClient.invalidateQueries({ queryKey: ["admin-businesses"] });
     },
@@ -110,6 +113,8 @@ export function PortfolioEditor({
         <TabsTrigger value="services">Services</TabsTrigger>
         <TabsTrigger value="gallery">Gallery</TabsTrigger>
         <TabsTrigger value="offers">Offers</TabsTrigger>
+        <TabsTrigger value="design">Design Studio</TabsTrigger>
+        <TabsTrigger value="reviews">Reviews</TabsTrigger>
         <TabsTrigger value="share">Share &amp; stats</TabsTrigger>
       </TabsList>
 
@@ -248,6 +253,14 @@ export function PortfolioEditor({
 
       <TabsContent value="offers" className="mt-6">
         <OffersPanel businessId={businessId} readOnly={readOnly} />
+      </TabsContent>
+
+      <TabsContent value="design" className="mt-6">
+        <DesignStudio businessId={businessId} readOnly={readOnly} />
+      </TabsContent>
+
+      <TabsContent value="reviews" className="mt-6">
+        <ReviewsPanel businessId={businessId} readOnly={readOnly} />
       </TabsContent>
 
       <TabsContent value="share" className="mt-6">
