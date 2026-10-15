@@ -29,7 +29,7 @@ export const getPublicBusiness = createServerFn({ method: "GET" })
     const { data: business } = await supabase
       .from("business_profiles")
       .select(
-        "id, business_name, slug, logo_url, cover_url, description, phone, whatsapp, email, website, instagram, facebook, tiktok, google_maps_url, address, opening_hours, published",
+        "id, business_name, slug, logo_url, cover_url, description, phone, whatsapp, email, website, instagram, facebook, tiktok, google_maps_url, address, opening_hours, published, google_review_url, external_review_url, show_review_cta, review_cta, design",
       )
       .eq("slug", data.slug)
       .eq("published", true)

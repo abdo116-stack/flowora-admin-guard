@@ -137,7 +137,7 @@ function pick<T extends string>(value: unknown, allowed: readonly T[], fallback:
 
 /** Validate untrusted JSON into a safe Design with backwards-compatible defaults. */
 export function parseDesign(raw: unknown): Design {
-  const r = (raw && typeof raw === "object" ? raw : {}) as Record<string, unknown>;
+  const r = (raw && typeof raw === "object" ? raw : {}) as Partial<Record<keyof Design, unknown>>;
   const c = (r.colors && typeof r.colors === "object" ? r.colors : {}) as Record<string, unknown>;
   const colors = Object.fromEntries(
     (Object.keys(DEFAULT_COLORS) as (keyof Colors)[]).map((k) => [
