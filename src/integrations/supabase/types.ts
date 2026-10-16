@@ -62,6 +62,7 @@ export type Database = {
           opening_hours: Json
           phone: string | null
           published: boolean
+          qr_design: Json
           review_cta: string | null
           show_review_cta: boolean
           slug: string
@@ -89,6 +90,7 @@ export type Database = {
           opening_hours?: Json
           phone?: string | null
           published?: boolean
+          qr_design?: Json
           review_cta?: string | null
           show_review_cta?: boolean
           slug: string
@@ -116,6 +118,7 @@ export type Database = {
           opening_hours?: Json
           phone?: string | null
           published?: boolean
+          qr_design?: Json
           review_cta?: string | null
           show_review_cta?: boolean
           slug?: string
@@ -258,6 +261,91 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "services_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "business_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      subscription_requests: {
+        Row: {
+          business_id: string
+          created_at: string
+          decided_at: string | null
+          decided_by: string | null
+          id: string
+          note: string | null
+          period: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          id?: string
+          note?: string | null
+          period?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          id?: string
+          note?: string | null
+          period?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscription_requests_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "business_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      subscriptions: {
+        Row: {
+          business_id: string
+          created_at: string
+          expires_at: string
+          id: string
+          period: string
+          starts_at: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          expires_at: string
+          id?: string
+          period?: string
+          starts_at?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          period?: string
+          starts_at?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_business_id_fkey"
             columns: ["business_id"]
             isOneToOne: false
             referencedRelation: "business_profiles"
