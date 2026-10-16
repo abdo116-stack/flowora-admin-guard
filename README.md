@@ -185,7 +185,7 @@ Only approved + published profiles are publicly visible.
 
 Do not create a public self-service business dashboard before approval.
 
-The platform is a managed-service platform operated by FLOWORA.
+The platform is a managed-service platform operated by Tapro.
 
 The Super Admin has complete control over which businesses are allowed to use the platform.
 
