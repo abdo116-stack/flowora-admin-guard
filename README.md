@@ -1,6 +1,6 @@
-# FLOWORA Admin Hub
+# Tapro
 
-Build and fully configure a secure Admin Authentication system for the FLOWORA Business Portfolio platform.
+Secure Admin Authentication system for the Tapro Business Portfolio platform.
 
 ### ADMIN ACCOUNT
 
@@ -185,7 +185,7 @@ Only approved + published profiles are publicly visible.
 
 Do not create a public self-service business dashboard before approval.
 
-The platform is a managed-service platform operated by FLOWORA.
+The platform is a managed-service platform operated by Tapro.
 
 The Super Admin has complete control over which businesses are allowed to use the platform.
 
