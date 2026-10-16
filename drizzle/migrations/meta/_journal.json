@@ -8,6 +8,20 @@
       "when": 1791931597355,
       "tag": "0000_reviews_and_design",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1792189231772,
+      "tag": "0001_subscriptions_and_qr_design",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792189263407,
+      "tag": "0002_lov_database_migration",
+      "breakpoints": true
     }
   ]
 }
