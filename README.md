@@ -1,6 +1,6 @@
-# FLOWORA Admin Hub
+# Tapro
 
-Build and fully configure a secure Admin Authentication system for the FLOWORA Business Portfolio platform.
+Secure Admin Authentication system for the Tapro Business Portfolio platform.
 
 ### ADMIN ACCOUNT
 
