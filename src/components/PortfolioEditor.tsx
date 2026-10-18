@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 import QRCode from "qrcode";
 import { supabase } from "@/integrations/supabase/client";
@@ -665,7 +666,10 @@ function SharePanel({ businessId, slug }: { businessId: string; slug: string }) 
         {qr ? (
           <>
             <img src={qr} alt={`QR code for ${slug}`} className="h-48 w-48 rounded-lg bg-white p-2" />
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
+              <Button asChild size="sm">
+                <Link to="/qr-studio">Customize My QR Code</Link>
+              </Button>
               <Button asChild variant="outline" size="sm">
                 <a href={qr} download={`tapro-${slug}-qr.png`}>
                   Download QR
@@ -682,6 +686,10 @@ function SharePanel({ businessId, slug }: { businessId: string; slug: string }) 
                 Copy link
               </Button>
             </div>
+            <p className="text-xs text-muted-foreground">
+              The studio lets you restyle the code, add your logo and a frame, and download
+              print-ready files.
+            </p>
           </>
         ) : null}
       </div>
