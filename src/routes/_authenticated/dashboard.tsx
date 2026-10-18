@@ -9,7 +9,9 @@ import { PortfolioEditor } from "@/components/PortfolioEditor";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { publicPortfolioUrl, slugify } from "@/lib/floword";
+import { useMySubscription } from "@/components/Pricing";
+import { publicPortfolioUrl, slugify, SITE_URL } from "@/lib/floword";
+import { CreditCard, FolderOpen, LifeBuoy, QrCode, Settings } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
@@ -166,7 +168,132 @@ function Dashboard() {
           </a>
         </Button>
       </div>
-      <PortfolioEditor businessId={business.id} canPublish />
+
+      <div className="mb-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <DashCard
+          icon={<FolderOpen className="h-5 w-5 text-primary" />}
+          title="My Portfolio"
+          desc="Edit details, services, photos and design below."
+        />
+        <DashCard
+          icon={<QrCode className="h-5 w-5 text-primary" />}
+          title="Customize QR Code"
+          desc="Style, colors, logo, frame and print downloads."
+          to="/qr-studio"
+        />
+        <DashCard
+          icon={<LifeBuoy className="h-5 w-5 text-primary" />}
+          title="Help & Support"
+          desc="softatlas38@gmail.com · 0681569749"
+          href="mailto:softatlas38@gmail.com"
+        />
+        <AccountCard email={auth.email} />
+      </div>
+
+      <SubscriptionCard businessId={business.id} />
+
+      <div className="mt-8">
+        <PortfolioEditor businessId={business.id} canPublish />
+      </div>
     </AppShell>
+  );
+}
+
+function DashCard({
+  icon,
+  title,
+  desc,
+  to,
+  href,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  desc: string;
+  to?: string;
+  href?: string;
+}) {
+  const inner = (
+    <div className="surface h-full p-4 transition hover:border-primary/50">
+      {icon}
+      <p className="mt-2 font-semibold">{title}</p>
+      <p className="mt-1 text-xs text-muted-foreground">{desc}</p>
+    </div>
+  );
+  if (to) return <Link to={to}>{inner}</Link>;
+  if (href)
+    return (
+      <a href={href} target="_blank" rel="noreferrer">
+        {inner}
+      </a>
+    );
+  return inner;
+}
+
+function AccountCard({ email }: { email?: string }) {
+  async function resetPassword() {
+    if (!email) return;
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${SITE_URL}/reset-password`,
+    });
+    if (error) toast.error(error.message);
+    else toast.success("Password reset link sent to your email");
+  }
+  return (
+    <button type="button" onClick={() => void resetPassword()} className="text-left">
+      <div className="surface h-full p-4 transition hover:border-primary/50">
+        <Settings className="h-5 w-5 text-primary" />
+        <p className="mt-2 font-semibold">Account Settings</p>
+        <p className="mt-1 text-xs text-muted-foreground">Send yourself a password reset link.</p>
+      </div>
+    </button>
+  );
+}
+
+function SubscriptionCard({ businessId }: { businessId: string }) {
+  const { data: sub, isLoading } = useMySubscription(businessId);
+  const s = sub?.subscription ?? null;
+  const req = sub?.request ?? null;
+  const active = s?.status === "active" && new Date(s.expires_at).getTime() > Date.now();
+  const expired = s?.status === "active" && new Date(s.expires_at).getTime() <= Date.now();
+
+  let status = "No subscription yet";
+  let detail = "Request a plan to keep your portfolio on the TAPRO Business plan.";
+  if (req?.status === "pending" && !active) {
+    status = "Request pending";
+    detail = `Your ${req.period} request is being reviewed — we'll contact you with payment instructions.`;
+  } else if (active) {
+    status = "Active";
+    detail = `${s!.period === "yearly" ? "Yearly" : "Monthly"} plan · renews by ${new Date(
+      s!.expires_at,
+    ).toLocaleDateString()}.`;
+  } else if (expired) {
+    status = "Expired";
+    detail = `Your subscription ended on ${new Date(
+      s!.expires_at,
+    ).toLocaleDateString()}. Your portfolio data is safe — renew to stay on the plan.`;
+  }
+
+  return (
+    <div className="surface flex flex-wrap items-center justify-between gap-4 p-5">
+      <div className="flex items-start gap-3">
+        <CreditCard className="mt-0.5 h-5 w-5 text-primary" />
+        <div>
+          <p className="font-semibold">
+            Subscription & Billing ·{" "}
+            <span
+              className={
+                active ? "text-primary" : req?.status === "pending" ? "text-warning" : "text-muted-foreground"
+              }
+            >
+              {isLoading ? "Loading…" : status}
+            </span>
+          </p>
+          <p className="mt-1 text-sm text-muted-foreground">{detail}</p>
+        </div>
+      </div>
+      <Button asChild variant={active ? "outline" : "default"} size="sm">
+        <Link to="/pricing">{active ? "Manage plan" : "View plans & renew"}</Link>
+      </Button>
+    </div>
   );
 }
