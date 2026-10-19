@@ -238,6 +238,9 @@ export function drawQr(
   ctx.fillStyle = d.bg;
   ctx.fillRect(0, 0, px, px);
 
+  const at = (r: number, c: number) =>
+    r >= 0 && c >= 0 && r < size && c < size && Boolean(data[r * size + c]) && !isFinder(size, r, c);
+
   ctx.fillStyle = d.fg;
   for (let r = 0; r < size; r++) {
     for (let c = 0; c < size; c++) {
@@ -245,11 +248,32 @@ export function drawQr(
       const x = (c + quiet) * cell;
       const y = (r + quiet) * cell;
       if (d.moduleStyle === "dots") {
+        // Full-cell circles keep edge contact with neighbors for reliable scanning.
         ctx.beginPath();
-        ctx.arc(x + cell / 2, y + cell / 2, cell * 0.42, 0, Math.PI * 2);
+        ctx.arc(x + cell / 2, y + cell / 2, cell * 0.5, 0, Math.PI * 2);
         ctx.fill();
       } else if (d.moduleStyle === "rounded") {
-        roundRect(ctx, x + cell * 0.08, y + cell * 0.08, cell * 0.84, cell * 0.84, cell * 0.3);
+        // Neighbor-aware rounding: full-cell coverage, corners rounded only when exposed.
+        const up = at(r - 1, c);
+        const down = at(r + 1, c);
+        const left = at(r, c - 1);
+        const right = at(r, c + 1);
+        const rad = cell * 0.42;
+        const tl = !up && !left ? rad : 0;
+        const tr = !up && !right ? rad : 0;
+        const br = !down && !right ? rad : 0;
+        const bl = !down && !left ? rad : 0;
+        ctx.beginPath();
+        ctx.moveTo(x + tl, y);
+        ctx.lineTo(x + cell - tr, y);
+        if (tr) ctx.arcTo(x + cell, y, x + cell, y + tr, tr);
+        ctx.lineTo(x + cell, y + cell - br);
+        if (br) ctx.arcTo(x + cell, y + cell, x + cell - br, y + cell, br);
+        ctx.lineTo(x + bl, y + cell);
+        if (bl) ctx.arcTo(x, y + cell, x, y + cell - bl, bl);
+        ctx.lineTo(x, y + tl);
+        if (tl) ctx.arcTo(x, y, x + tl, y, tl);
+        ctx.closePath();
         ctx.fill();
       } else {
         ctx.fillRect(x, y, cell + 0.5, cell + 0.5);
