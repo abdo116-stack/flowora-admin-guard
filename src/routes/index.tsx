@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import QRCode from "qrcode";
 import { Button } from "@/components/ui/button";
 import { SiteFooter, SiteHeader } from "@/components/Site";
-import { publicPortfolioUrl } from "@/lib/floword";
+import { FALLBACK_SITE_URL, publicPortfolioUrl } from "@/lib/floword";
 import {
   Camera,
   Contact,
@@ -41,7 +41,12 @@ export const Route = createFileRoute("/")({
   component: Landing,
 });
 
-const DEMO_URL = publicPortfolioUrl("tapro");
+/** Demo URL: stable fallback during SSR, real origin after hydration (avoids mismatch). */
+function useDemoUrl() {
+  const [url, setUrl] = useState(`${FALLBACK_SITE_URL}/p/tapro`);
+  useEffect(() => setUrl(publicPortfolioUrl("tapro")), []);
+  return url;
+}
 
 function useQrDataUrl(text: string) {
   const [src, setSrc] = useState<string | null>(null);
