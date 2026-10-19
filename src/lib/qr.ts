@@ -130,20 +130,20 @@ function pick<T extends string>(v: unknown, allowed: readonly T[], fallback: T):
 /** Validate untrusted JSON (from the database) into a safe QrDesign. */
 export function parseQrDesign(raw: unknown): QrDesign {
   const r = (raw && typeof raw === "object" ? raw : {}) as Record<string, unknown>;
-  const scale = typeof r.logoScale === "number" ? r.logoScale : DEFAULT_QR_DESIGN.logoScale;
-  const quiet = typeof r.quiet === "number" ? r.quiet : DEFAULT_QR_DESIGN.quiet;
+  const scale = typeof r["logoScale"] === "number" ? r["logoScale"] : DEFAULT_QR_DESIGN.logoScale;
+  const quiet = typeof r["quiet"] === "number" ? r["quiet"] : DEFAULT_QR_DESIGN.quiet;
   return {
-    moduleStyle: pick(r.moduleStyle, ["square", "rounded", "dots"] as const, "rounded"),
-    finderStyle: pick(r.finderStyle, ["square", "rounded", "circle"] as const, "rounded"),
-    fg: hex(r.fg, DEFAULT_QR_DESIGN.fg),
-    bg: hex(r.bg, DEFAULT_QR_DESIGN.bg),
-    corner: hex(r.corner, DEFAULT_QR_DESIGN.corner),
+    moduleStyle: pick(r["moduleStyle"], ["square", "rounded", "dots"] as const, "rounded"),
+    finderStyle: pick(r["finderStyle"], ["square", "rounded", "circle"] as const, "rounded"),
+    fg: hex(r["fg"], DEFAULT_QR_DESIGN.fg),
+    bg: hex(r["bg"], DEFAULT_QR_DESIGN.bg),
+    corner: hex(r["corner"], DEFAULT_QR_DESIGN.corner),
     logoScale: Math.min(0.3, Math.max(0, scale)),
-    logoPlate: r.logoPlate !== false,
-    frame: pick(r.frame, ["none", "card", "outline", "caption-top", "caption-bottom"] as const, "card"),
-    caption: typeof r.caption === "string" ? r.caption.slice(0, 60) : DEFAULT_QR_DESIGN.caption,
-    captionColor: hex(r.captionColor, DEFAULT_QR_DESIGN.captionColor),
-    frameColor: hex(r.frameColor, DEFAULT_QR_DESIGN.frameColor),
+    logoPlate: r["logoPlate"] !== false,
+    frame: pick(r["frame"], ["none", "card", "outline", "caption-top", "caption-bottom"] as const, "card"),
+    caption: typeof r["caption"] === "string" ? r["caption"].slice(0, 60) : DEFAULT_QR_DESIGN.caption,
+    captionColor: hex(r["captionColor"], DEFAULT_QR_DESIGN.captionColor),
+    frameColor: hex(r["frameColor"], DEFAULT_QR_DESIGN.frameColor),
     quiet: Math.min(8, Math.max(4, Math.round(quiet))),
   };
 }
@@ -285,7 +285,7 @@ export function drawCard(
   canvas: HTMLCanvasElement,
   text: string,
   d: QrDesign,
-  opts: { businessName?: string; logo?: HTMLImageElement | null } = {},
+  opts: { businessName?: string | undefined; logo?: HTMLImageElement | null } = {},
 ) {
   const W = canvas.width;
   const H = canvas.height;
