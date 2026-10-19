@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import QRCode from "qrcode";
 import { Button } from "@/components/ui/button";
 import { SiteFooter, SiteHeader } from "@/components/Site";
-import { publicPortfolioUrl } from "@/lib/floword";
+import { FALLBACK_SITE_URL, publicPortfolioUrl } from "@/lib/floword";
 import {
   Camera,
   Contact,
@@ -41,7 +41,12 @@ export const Route = createFileRoute("/")({
   component: Landing,
 });
 
-const DEMO_URL = publicPortfolioUrl("tapro");
+/** Demo URL: stable fallback during SSR, real origin after hydration (avoids mismatch). */
+function useDemoUrl() {
+  const [url, setUrl] = useState(`${FALLBACK_SITE_URL}/p/tapro`);
+  useEffect(() => setUrl(publicPortfolioUrl("tapro")), []);
+  return url;
+}
 
 function useQrDataUrl(text: string) {
   const [src, setSrc] = useState<string | null>(null);
@@ -78,7 +83,8 @@ const USE_CASES = [
 ];
 
 function Landing() {
-  const demoQr = useQrDataUrl(DEMO_URL);
+  const demoUrl = useDemoUrl();
+  const demoQr = useQrDataUrl(demoUrl);
 
   return (
     <div className="min-h-screen bg-background">
@@ -160,7 +166,7 @@ function Landing() {
               ))}
             </ol>
             <Button asChild className="mt-8">
-              <a href={DEMO_URL} target="_blank" rel="noreferrer">
+              <a href={demoUrl} target="_blank" rel="noreferrer">
                 Open Full Portfolio Demo
               </a>
             </Button>
@@ -172,7 +178,7 @@ function Landing() {
               <div className="aspect-square w-full animate-pulse rounded-xl bg-muted" />
             )}
             <p className="mt-4 text-sm font-semibold">Scan with your phone</p>
-            <p className="mt-1 break-all text-xs text-muted-foreground">{DEMO_URL}</p>
+            <p className="mt-1 break-all text-xs text-muted-foreground">{demoUrl}</p>
           </div>
         </div>
       </section>

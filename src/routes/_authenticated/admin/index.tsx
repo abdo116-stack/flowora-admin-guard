@@ -74,6 +74,7 @@ function AdminPage() {
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="users">Users</TabsTrigger>
           <TabsTrigger value="businesses">Portfolios</TabsTrigger>
+          <TabsTrigger value="subscriptions">Subscriptions</TabsTrigger>
         </TabsList>
         <TabsContent value="overview" className="mt-6">
           <OverviewPanel />
@@ -84,8 +85,194 @@ function AdminPage() {
         <TabsContent value="businesses" className="mt-6">
           <BusinessesPanel />
         </TabsContent>
+        <TabsContent value="subscriptions" className="mt-6">
+          <SubscriptionsPanel />
+        </TabsContent>
       </Tabs>
     </AppShell>
+  );
+}
+
+type SubRequest = {
+  id: string;
+  user_id: string;
+  business_id: string;
+  period: "monthly" | "yearly";
+  status: "pending" | "approved" | "rejected";
+  created_at: string;
+};
+
+function SubscriptionsPanel() {
+  const qc = useQueryClient();
+
+  const { data: requests } = useQuery({
+    queryKey: ["admin-sub-requests"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("subscription_requests")
+        .select("id, user_id, business_id, period, status, created_at")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return (data ?? []) as SubRequest[];
+    },
+  });
+
+  const { data: subs } = useQuery({
+    queryKey: ["admin-subscriptions"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("subscriptions")
+        .select("id, user_id, business_id, period, status, expires_at")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const { data: users } = useQuery({
+    queryKey: ["admin-users"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("profiles").select("id, email, full_name");
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const { data: businesses } = useQuery({
+    queryKey: ["admin-businesses"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("business_profiles")
+        .select("id, business_name, slug");
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const emailOf = (id: string) => (users ?? []).find((u) => u.id === id)?.email ?? id.slice(0, 8);
+  const nameOf = (id: string) =>
+    (businesses ?? []).find((b) => b.id === id)?.business_name ?? "Unknown portfolio";
+
+  const decide = useMutation({
+    mutationFn: async ({ req, approve }: { req: SubRequest; approve: boolean }) => {
+      const { error } = await supabase
+        .from("subscription_requests")
+        .update({
+          status: approve ? "approved" : "rejected",
+          decided_at: new Date().toISOString(),
+        })
+        .eq("id", req.id)
+        .eq("status", "pending");
+      if (error) throw error;
+      if (approve) {
+        const months = req.period === "yearly" ? 12 : 1;
+        const expires = new Date();
+        expires.setMonth(expires.getMonth() + months);
+        const { error: e2 } = await supabase.from("subscriptions").insert({
+          user_id: req.user_id,
+          business_id: req.business_id,
+          period: req.period,
+          status: "active",
+          expires_at: expires.toISOString(),
+        });
+        if (e2) throw e2;
+      }
+    },
+    onSuccess: () => {
+      toast.success("Request updated");
+      void qc.invalidateQueries({ queryKey: ["admin-sub-requests"] });
+      void qc.invalidateQueries({ queryKey: ["admin-subscriptions"] });
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Could not update"),
+  });
+
+  const pending = (requests ?? []).filter((r) => r.status === "pending");
+  const decided = (requests ?? []).filter((r) => r.status !== "pending");
+
+  return (
+    <div className="space-y-8">
+      <section>
+        <h2 className="mb-3 text-lg font-semibold">Pending requests</h2>
+        <div className="space-y-3">
+          {pending.map((r) => (
+            <div key={r.id} className="surface flex flex-wrap items-center justify-between gap-4 p-4">
+              <div>
+                <p className="font-medium">{nameOf(r.business_id)}</p>
+                <p className="text-xs text-muted-foreground">
+                  {emailOf(r.user_id)} · {r.period === "yearly" ? "Yearly — 490 MAD" : "Monthly — 49 MAD"} ·{" "}
+                  {new Date(r.created_at).toLocaleDateString()}
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  disabled={decide.isPending}
+                  onClick={() => decide.mutate({ req: r, approve: true })}
+                >
+                  Approve & activate
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={decide.isPending}
+                  onClick={() => decide.mutate({ req: r, approve: false })}
+                >
+                  Reject
+                </Button>
+              </div>
+            </div>
+          ))}
+          {pending.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No pending requests.</p>
+          ) : null}
+        </div>
+      </section>
+
+      <section>
+        <h2 className="mb-3 text-lg font-semibold">Active & past subscriptions</h2>
+        <div className="space-y-3">
+          {(subs ?? []).map((s) => {
+            const isActive = s.status === "active" && new Date(s.expires_at).getTime() > Date.now();
+            return (
+              <div key={s.id} className="surface flex flex-wrap items-center justify-between gap-4 p-4">
+                <div>
+                  <p className="font-medium">{nameOf(s.business_id)}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {emailOf(s.user_id)} · {s.period} · expires{" "}
+                    {new Date(s.expires_at).toLocaleDateString()}
+                  </p>
+                </div>
+                <Badge
+                  variant="secondary"
+                  className={isActive ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"}
+                >
+                  {isActive ? "Active" : "Expired"}
+                </Badge>
+              </div>
+            );
+          })}
+          {(subs ?? []).length === 0 ? (
+            <p className="text-sm text-muted-foreground">No subscriptions yet.</p>
+          ) : null}
+        </div>
+      </section>
+
+      {decided.length > 0 ? (
+        <section>
+          <h2 className="mb-3 text-lg font-semibold">Request history</h2>
+          <div className="space-y-2">
+            {decided.map((r) => (
+              <div key={r.id} className="flex items-center justify-between rounded-lg border border-border px-4 py-2 text-sm">
+                <span>
+                  {nameOf(r.business_id)} · {r.period}
+                </span>
+                <Badge variant="secondary">{r.status}</Badge>
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : null}
+    </div>
   );
 }
 

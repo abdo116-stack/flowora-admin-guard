@@ -130,20 +130,20 @@ function pick<T extends string>(v: unknown, allowed: readonly T[], fallback: T):
 /** Validate untrusted JSON (from the database) into a safe QrDesign. */
 export function parseQrDesign(raw: unknown): QrDesign {
   const r = (raw && typeof raw === "object" ? raw : {}) as Record<string, unknown>;
-  const scale = typeof r.logoScale === "number" ? r.logoScale : DEFAULT_QR_DESIGN.logoScale;
-  const quiet = typeof r.quiet === "number" ? r.quiet : DEFAULT_QR_DESIGN.quiet;
+  const scale = typeof r["logoScale"] === "number" ? r["logoScale"] : DEFAULT_QR_DESIGN.logoScale;
+  const quiet = typeof r["quiet"] === "number" ? r["quiet"] : DEFAULT_QR_DESIGN.quiet;
   return {
-    moduleStyle: pick(r.moduleStyle, ["square", "rounded", "dots"] as const, "rounded"),
-    finderStyle: pick(r.finderStyle, ["square", "rounded", "circle"] as const, "rounded"),
-    fg: hex(r.fg, DEFAULT_QR_DESIGN.fg),
-    bg: hex(r.bg, DEFAULT_QR_DESIGN.bg),
-    corner: hex(r.corner, DEFAULT_QR_DESIGN.corner),
+    moduleStyle: pick(r["moduleStyle"], ["square", "rounded", "dots"] as const, "rounded"),
+    finderStyle: pick(r["finderStyle"], ["square", "rounded", "circle"] as const, "rounded"),
+    fg: hex(r["fg"], DEFAULT_QR_DESIGN.fg),
+    bg: hex(r["bg"], DEFAULT_QR_DESIGN.bg),
+    corner: hex(r["corner"], DEFAULT_QR_DESIGN.corner),
     logoScale: Math.min(0.3, Math.max(0, scale)),
-    logoPlate: r.logoPlate !== false,
-    frame: pick(r.frame, ["none", "card", "outline", "caption-top", "caption-bottom"] as const, "card"),
-    caption: typeof r.caption === "string" ? r.caption.slice(0, 60) : DEFAULT_QR_DESIGN.caption,
-    captionColor: hex(r.captionColor, DEFAULT_QR_DESIGN.captionColor),
-    frameColor: hex(r.frameColor, DEFAULT_QR_DESIGN.frameColor),
+    logoPlate: r["logoPlate"] !== false,
+    frame: pick(r["frame"], ["none", "card", "outline", "caption-top", "caption-bottom"] as const, "card"),
+    caption: typeof r["caption"] === "string" ? r["caption"].slice(0, 60) : DEFAULT_QR_DESIGN.caption,
+    captionColor: hex(r["captionColor"], DEFAULT_QR_DESIGN.captionColor),
+    frameColor: hex(r["frameColor"], DEFAULT_QR_DESIGN.frameColor),
     quiet: Math.min(8, Math.max(4, Math.round(quiet))),
   };
 }
@@ -238,6 +238,9 @@ export function drawQr(
   ctx.fillStyle = d.bg;
   ctx.fillRect(0, 0, px, px);
 
+  const at = (r: number, c: number) =>
+    r >= 0 && c >= 0 && r < size && c < size && Boolean(data[r * size + c]) && !isFinder(size, r, c);
+
   ctx.fillStyle = d.fg;
   for (let r = 0; r < size; r++) {
     for (let c = 0; c < size; c++) {
@@ -245,11 +248,32 @@ export function drawQr(
       const x = (c + quiet) * cell;
       const y = (r + quiet) * cell;
       if (d.moduleStyle === "dots") {
+        // Full-cell circles keep edge contact with neighbors for reliable scanning.
         ctx.beginPath();
-        ctx.arc(x + cell / 2, y + cell / 2, cell * 0.42, 0, Math.PI * 2);
+        ctx.arc(x + cell / 2, y + cell / 2, cell * 0.5, 0, Math.PI * 2);
         ctx.fill();
       } else if (d.moduleStyle === "rounded") {
-        roundRect(ctx, x + cell * 0.08, y + cell * 0.08, cell * 0.84, cell * 0.84, cell * 0.3);
+        // Neighbor-aware rounding: full-cell coverage, corners rounded only when exposed.
+        const up = at(r - 1, c);
+        const down = at(r + 1, c);
+        const left = at(r, c - 1);
+        const right = at(r, c + 1);
+        const rad = cell * 0.42;
+        const tl = !up && !left ? rad : 0;
+        const tr = !up && !right ? rad : 0;
+        const br = !down && !right ? rad : 0;
+        const bl = !down && !left ? rad : 0;
+        ctx.beginPath();
+        ctx.moveTo(x + tl, y);
+        ctx.lineTo(x + cell - tr, y);
+        if (tr) ctx.arcTo(x + cell, y, x + cell, y + tr, tr);
+        ctx.lineTo(x + cell, y + cell - br);
+        if (br) ctx.arcTo(x + cell, y + cell, x + cell - br, y + cell, br);
+        ctx.lineTo(x + bl, y + cell);
+        if (bl) ctx.arcTo(x, y + cell, x, y + cell - bl, bl);
+        ctx.lineTo(x, y + tl);
+        if (tl) ctx.arcTo(x, y, x + tl, y, tl);
+        ctx.closePath();
         ctx.fill();
       } else {
         ctx.fillRect(x, y, cell + 0.5, cell + 0.5);
@@ -285,7 +309,7 @@ export function drawCard(
   canvas: HTMLCanvasElement,
   text: string,
   d: QrDesign,
-  opts: { businessName?: string; logo?: HTMLImageElement | null } = {},
+  opts: { businessName?: string | undefined; logo?: HTMLImageElement | null } = {},
 ) {
   const W = canvas.width;
   const H = canvas.height;
@@ -380,17 +404,37 @@ export function qrSvg(text: string, d: QrDesign, logoUrl?: string | null): strin
   const px = total * cell;
   const parts: string[] = [`<rect width="${px}" height="${px}" fill="${d.bg}"/>`];
 
+  const at = (r: number, c: number) =>
+    r >= 0 && c >= 0 && r < size && c < size && Boolean(data[r * size + c]) && !isFinder(size, r, c);
+
   for (let r = 0; r < size; r++) {
     for (let c = 0; c < size; c++) {
       if (!data[r * size + c] || isFinder(size, r, c)) continue;
       const x = (c + quiet) * cell;
       const y = (r + quiet) * cell;
       if (d.moduleStyle === "dots") {
-        parts.push(`<circle cx="${x + cell / 2}" cy="${y + cell / 2}" r="${cell * 0.42}" fill="${d.fg}"/>`);
+        parts.push(`<circle cx="${x + cell / 2}" cy="${y + cell / 2}" r="${cell * 0.5}" fill="${d.fg}"/>`);
       } else if (d.moduleStyle === "rounded") {
-        parts.push(
-          `<rect x="${x + cell * 0.08}" y="${y + cell * 0.08}" width="${cell * 0.84}" height="${cell * 0.84}" rx="${cell * 0.3}" fill="${d.fg}"/>`,
-        );
+        const up = at(r - 1, c);
+        const down = at(r + 1, c);
+        const left = at(r, c - 1);
+        const right = at(r, c + 1);
+        const rad = cell * 0.42;
+        const tl = !up && !left ? rad : 0;
+        const tr = !up && !right ? rad : 0;
+        const br = !down && !right ? rad : 0;
+        const bl = !down && !left ? rad : 0;
+        const path =
+          `M${x + tl} ${y} L${x + cell - tr} ${y}` +
+          (tr ? ` A${tr} ${tr} 0 0 1 ${x + cell} ${y + tr}` : "") +
+          ` L${x + cell} ${y + cell - br}` +
+          (br ? ` A${br} ${br} 0 0 1 ${x + cell - br} ${y + cell}` : "") +
+          ` L${x + bl} ${y + cell}` +
+          (bl ? ` A${bl} ${bl} 0 0 1 ${x} ${y + cell - bl}` : "") +
+          ` L${x} ${y + tl}` +
+          (tl ? ` A${tl} ${tl} 0 0 1 ${x + tl} ${y}` : "") +
+          " Z";
+        parts.push(`<path d="${path}" fill="${d.fg}"/>`);
       } else {
         parts.push(`<rect x="${x}" y="${y}" width="${cell}" height="${cell}" fill="${d.fg}"/>`);
       }
