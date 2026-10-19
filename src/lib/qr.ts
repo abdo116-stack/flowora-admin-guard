@@ -404,17 +404,37 @@ export function qrSvg(text: string, d: QrDesign, logoUrl?: string | null): strin
   const px = total * cell;
   const parts: string[] = [`<rect width="${px}" height="${px}" fill="${d.bg}"/>`];
 
+  const at = (r: number, c: number) =>
+    r >= 0 && c >= 0 && r < size && c < size && Boolean(data[r * size + c]) && !isFinder(size, r, c);
+
   for (let r = 0; r < size; r++) {
     for (let c = 0; c < size; c++) {
       if (!data[r * size + c] || isFinder(size, r, c)) continue;
       const x = (c + quiet) * cell;
       const y = (r + quiet) * cell;
       if (d.moduleStyle === "dots") {
-        parts.push(`<circle cx="${x + cell / 2}" cy="${y + cell / 2}" r="${cell * 0.42}" fill="${d.fg}"/>`);
+        parts.push(`<circle cx="${x + cell / 2}" cy="${y + cell / 2}" r="${cell * 0.5}" fill="${d.fg}"/>`);
       } else if (d.moduleStyle === "rounded") {
-        parts.push(
-          `<rect x="${x + cell * 0.08}" y="${y + cell * 0.08}" width="${cell * 0.84}" height="${cell * 0.84}" rx="${cell * 0.3}" fill="${d.fg}"/>`,
-        );
+        const up = at(r - 1, c);
+        const down = at(r + 1, c);
+        const left = at(r, c - 1);
+        const right = at(r, c + 1);
+        const rad = cell * 0.42;
+        const tl = !up && !left ? rad : 0;
+        const tr = !up && !right ? rad : 0;
+        const br = !down && !right ? rad : 0;
+        const bl = !down && !left ? rad : 0;
+        const path =
+          `M${x + tl} ${y} L${x + cell - tr} ${y}` +
+          (tr ? ` A${tr} ${tr} 0 0 1 ${x + cell} ${y + tr}` : "") +
+          ` L${x + cell} ${y + cell - br}` +
+          (br ? ` A${br} ${br} 0 0 1 ${x + cell - br} ${y + cell}` : "") +
+          ` L${x + bl} ${y + cell}` +
+          (bl ? ` A${bl} ${bl} 0 0 1 ${x} ${y + cell - bl}` : "") +
+          ` L${x} ${y + tl}` +
+          (tl ? ` A${tl} ${tl} 0 0 1 ${x + tl} ${y}` : "") +
+          " Z";
+        parts.push(`<path d="${path}" fill="${d.fg}"/>`);
       } else {
         parts.push(`<rect x="${x}" y="${y}" width="${cell}" height="${cell}" fill="${d.fg}"/>`);
       }
