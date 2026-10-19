@@ -83,7 +83,8 @@ const USE_CASES = [
 ];
 
 function Landing() {
-  const demoQr = useQrDataUrl(DEMO_URL);
+  const demoUrl = useDemoUrl();
+  const demoQr = useQrDataUrl(demoUrl);
 
   return (
     <div className="min-h-screen bg-background">
@@ -165,7 +166,7 @@ function Landing() {
               ))}
             </ol>
             <Button asChild className="mt-8">
-              <a href={DEMO_URL} target="_blank" rel="noreferrer">
+              <a href={demoUrl} target="_blank" rel="noreferrer">
                 Open Full Portfolio Demo
               </a>
             </Button>
@@ -177,7 +178,7 @@ function Landing() {
               <div className="aspect-square w-full animate-pulse rounded-xl bg-muted" />
             )}
             <p className="mt-4 text-sm font-semibold">Scan with your phone</p>
-            <p className="mt-1 break-all text-xs text-muted-foreground">{DEMO_URL}</p>
+            <p className="mt-1 break-all text-xs text-muted-foreground">{demoUrl}</p>
           </div>
         </div>
       </section>
