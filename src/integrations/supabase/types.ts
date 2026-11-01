@@ -268,6 +268,60 @@ export type Database = {
           },
         ]
       }
+      subscription_payments: {
+        Row: {
+          amount: number
+          business_id: string
+          created_at: string
+          currency: string
+          id: string
+          paid_at: string
+          period: string
+          reference: string | null
+          subscription_id: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          business_id: string
+          created_at?: string
+          currency?: string
+          id?: string
+          paid_at?: string
+          period: string
+          reference?: string | null
+          subscription_id: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          business_id?: string
+          created_at?: string
+          currency?: string
+          id?: string
+          paid_at?: string
+          period?: string
+          reference?: string | null
+          subscription_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscription_payments_business_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "business_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscription_payments_subscription_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: true
+            referencedRelation: "subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       subscription_requests: {
         Row: {
           business_id: string
