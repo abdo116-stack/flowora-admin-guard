@@ -109,7 +109,7 @@ function Landing() {
               <a href="#demo">Explore the Live Demo</a>
             </Button>
             <Button asChild size="lg" variant="outline">
-              <Link to="/qr-studio">Explore QR Designs</Link>
+              <a href="#pricing">See Pricing</a>
             </Button>
           </div>
         </div>
@@ -254,6 +254,41 @@ function Landing() {
         </div>
       </section>
 
+      {/* Pricing */}
+      <section id="pricing" className="mx-auto max-w-6xl px-4 py-20">
+        <h2 className="text-center text-3xl font-bold">One plan, clear pricing</h2>
+        <p className="mx-auto mt-3 max-w-xl text-center text-muted-foreground">
+          Everything Tapro offers is included in one plan — choose monthly or yearly billing.
+        </p>
+        <div className="mx-auto mt-10 grid max-w-3xl gap-4 sm:grid-cols-2">
+          <PriceCard
+            title="Monthly"
+            amount={49}
+            unit="MAD / month"
+            note="Billed month by month. If a subscription ends, your portfolio data stays safe."
+          />
+          <PriceCard
+            title="Yearly"
+            amount={490}
+            unit="MAD / year"
+            badge="Save 98 MAD"
+            note="Two months free compared with paying monthly."
+          />
+        </div>
+        <p className="mt-8 text-center text-sm text-muted-foreground">
+          Every billing period includes the full portfolio, the QR Design Studio and review
+          requests. No tiers, no add-ons.
+        </p>
+        <div className="mt-6 flex flex-wrap justify-center gap-3">
+          <Button asChild size="lg">
+            <Link to="/auth">Get Started with TAPRO</Link>
+          </Button>
+          <Button asChild size="lg" variant="outline">
+            <Link to="/pricing">Full pricing details</Link>
+          </Button>
+        </div>
+      </section>
+
       {/* Final CTA */}
       <section className="border-t border-border/70 bg-card/40">
         <div className="mx-auto max-w-3xl px-4 py-20 text-center">
@@ -269,6 +304,36 @@ function Landing() {
       </section>
 
       <SiteFooter />
+    </div>
+  );
+}
+
+function PriceCard({
+  title,
+  amount,
+  unit,
+  note,
+  badge,
+}: {
+  title: string;
+  amount: number;
+  unit: string;
+  note: string;
+  badge?: string;
+}) {
+  return (
+    <div className="surface p-6 text-center">
+      {badge ? (
+        <span className="mb-2 inline-block rounded-full bg-primary/15 px-3 py-1 text-xs font-semibold text-primary">
+          {badge}
+        </span>
+      ) : null}
+      <p className="font-semibold">{title}</p>
+      <p className="mt-2">
+        <span className="text-4xl font-bold">{amount}</span>{" "}
+        <span className="text-sm text-muted-foreground">{unit}</span>
+      </p>
+      <p className="mt-3 text-xs text-muted-foreground">{note}</p>
     </div>
   );
 }

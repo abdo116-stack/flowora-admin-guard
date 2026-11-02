@@ -108,16 +108,21 @@ export function PortfolioEditor({
 
   return (
     <Tabs defaultValue="details" className="w-full">
-      <TabsList className="flex w-full flex-wrap justify-start">
-        <TabsTrigger value="details">Details</TabsTrigger>
-        <TabsTrigger value="hours">Hours</TabsTrigger>
-        <TabsTrigger value="services">Services</TabsTrigger>
-        <TabsTrigger value="gallery">Gallery</TabsTrigger>
-        <TabsTrigger value="offers">Offers</TabsTrigger>
-        <TabsTrigger value="design">Design Studio</TabsTrigger>
-        <TabsTrigger value="reviews">Reviews</TabsTrigger>
-        <TabsTrigger value="share">Share &amp; stats</TabsTrigger>
-      </TabsList>
+      <div className="flex w-full flex-wrap items-center justify-between gap-2">
+        <TabsList className="flex flex-wrap justify-start">
+          <TabsTrigger value="details">Details</TabsTrigger>
+          <TabsTrigger value="hours">Hours</TabsTrigger>
+          <TabsTrigger value="services">Services</TabsTrigger>
+          <TabsTrigger value="gallery">Gallery</TabsTrigger>
+          <TabsTrigger value="offers">Offers</TabsTrigger>
+          <TabsTrigger value="design">Design Studio</TabsTrigger>
+          <TabsTrigger value="reviews">Reviews</TabsTrigger>
+          <TabsTrigger value="share">Share &amp; stats</TabsTrigger>
+        </TabsList>
+        <Button asChild variant="outline" size="sm">
+          <Link to="/qr-studio">Customize QR Code</Link>
+        </Button>
+      </div>
 
       <TabsContent value="details" className="mt-6 space-y-6">
         <div className="surface space-y-5 p-5">
