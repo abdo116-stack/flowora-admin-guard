@@ -109,7 +109,7 @@ function Landing() {
               <a href="#demo">Explore the Live Demo</a>
             </Button>
             <Button asChild size="lg" variant="outline">
-              <Link to="/qr-studio">Explore QR Designs</Link>
+              <a href="#pricing">See Pricing</a>
             </Button>
           </div>
         </div>
@@ -251,6 +251,41 @@ function Landing() {
               <p className="mt-1 text-sm text-muted-foreground">{u.d}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Pricing */}
+      <section id="pricing" className="mx-auto max-w-6xl px-4 py-20">
+        <h2 className="text-center text-3xl font-bold">One plan, clear pricing</h2>
+        <p className="mx-auto mt-3 max-w-xl text-center text-muted-foreground">
+          Everything Tapro offers is included in one plan — choose monthly or yearly billing.
+        </p>
+        <div className="mx-auto mt-10 grid max-w-3xl gap-4 sm:grid-cols-2">
+          <PriceCard
+            title="Monthly"
+            amount={49}
+            unit="MAD / month"
+            note="Billed month by month. If a subscription ends, your portfolio data stays safe."
+          />
+          <PriceCard
+            title="Yearly"
+            amount={490}
+            unit="MAD / year"
+            badge="Save 98 MAD"
+            note="Two months free compared with paying monthly."
+          />
+        </div>
+        <p className="mt-8 text-center text-sm text-muted-foreground">
+          Every billing period includes the full portfolio, the QR Design Studio and review
+          requests. No tiers, no add-ons.
+        </p>
+        <div className="mt-6 flex flex-wrap justify-center gap-3">
+          <Button asChild size="lg">
+            <Link to="/auth">Get Started with TAPRO</Link>
+          </Button>
+          <Button asChild size="lg" variant="outline">
+            <Link to="/pricing">Full pricing details</Link>
+          </Button>
         </div>
       </section>
 
