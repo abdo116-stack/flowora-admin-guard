@@ -5,8 +5,7 @@ import { Button } from "@/components/ui/button";
 const NAV = [
   { label: "How It Works", href: "/#how-it-works" },
   { label: "Features", href: "/#features" },
-  { label: "QR Design Studio", to: "/qr-studio" },
-  { label: "Pricing", to: "/pricing" },
+  { label: "Pricing", href: "/#pricing" },
   { label: "FAQ", to: "/faq" },
 ] as const;
 
@@ -54,11 +53,6 @@ export function SiteFooter() {
         </div>
         <nav className="space-y-2 text-sm" aria-label="Footer navigation">
           <p className="font-semibold">Explore</p>
-          <p>
-            <Link to="/qr-studio" className="text-muted-foreground hover:text-foreground">
-              QR Design Studio
-            </Link>
-          </p>
           <p>
             <Link to="/pricing" className="text-muted-foreground hover:text-foreground">
               Pricing

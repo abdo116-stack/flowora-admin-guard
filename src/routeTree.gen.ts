@@ -16,10 +16,10 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PrivacyRouteImport } from './routes/privacy'
-import { Route as QrStudioRouteImport } from './routes/qr-studio'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedQrStudioRouteImport } from './routes/_authenticated/qr-studio'
 import { Route as PSlugRouteImport } from './routes/p.$slug'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
 import { Route as AuthenticatedAdminBusinessIdRouteImport } from './routes/_authenticated/admin/business.$id'
@@ -58,11 +58,6 @@ const PrivacyRoute = PrivacyRouteImport.update({
   path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
-const QrStudioRoute = QrStudioRouteImport.update({
-  id: '/qr-studio',
-  path: '/qr-studio',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
@@ -76,6 +71,11 @@ const TermsRoute = TermsRouteImport.update({
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedQrStudioRoute = AuthenticatedQrStudioRouteImport.update({
+  id: '/qr-studio',
+  path: '/qr-studio',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const PSlugRoute = PSlugRouteImport.update({
@@ -102,10 +102,10 @@ export interface FileRoutesByFullPath {
   '/faq': typeof FaqRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
-  '/qr-studio': typeof QrStudioRoute
   '/reset-password': typeof ResetPasswordRoute
   '/terms': typeof TermsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/qr-studio': typeof AuthenticatedQrStudioRoute
   '/p/$slug': typeof PSlugRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/business/$id': typeof AuthenticatedAdminBusinessIdRoute
@@ -117,10 +117,10 @@ export interface FileRoutesByTo {
   '/faq': typeof FaqRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
-  '/qr-studio': typeof QrStudioRoute
   '/reset-password': typeof ResetPasswordRoute
   '/terms': typeof TermsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/qr-studio': typeof AuthenticatedQrStudioRoute
   '/p/$slug': typeof PSlugRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/business/$id': typeof AuthenticatedAdminBusinessIdRoute
@@ -134,10 +134,10 @@ export interface FileRoutesById {
   '/faq': typeof FaqRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
-  '/qr-studio': typeof QrStudioRoute
   '/reset-password': typeof ResetPasswordRoute
   '/terms': typeof TermsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/qr-studio': typeof AuthenticatedQrStudioRoute
   '/p/$slug': typeof PSlugRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/business/$id': typeof AuthenticatedAdminBusinessIdRoute
@@ -151,10 +151,10 @@ export interface FileRouteTypes {
     | '/faq'
     | '/pricing'
     | '/privacy'
-    | '/qr-studio'
     | '/reset-password'
     | '/terms'
     | '/dashboard'
+    | '/qr-studio'
     | '/p/$slug'
     | '/admin/'
     | '/admin/business/$id'
@@ -166,10 +166,10 @@ export interface FileRouteTypes {
     | '/faq'
     | '/pricing'
     | '/privacy'
-    | '/qr-studio'
     | '/reset-password'
     | '/terms'
     | '/dashboard'
+    | '/qr-studio'
     | '/p/$slug'
     | '/admin'
     | '/admin/business/$id'
@@ -182,10 +182,10 @@ export interface FileRouteTypes {
     | '/faq'
     | '/pricing'
     | '/privacy'
-    | '/qr-studio'
     | '/reset-password'
     | '/terms'
     | '/_authenticated/dashboard'
+    | '/_authenticated/qr-studio'
     | '/p/$slug'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/business/$id'
@@ -199,7 +199,6 @@ export interface RootRouteChildren {
   FaqRoute: typeof FaqRoute
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
-  QrStudioRoute: typeof QrStudioRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   TermsRoute: typeof TermsRoute
   PSlugRoute: typeof PSlugRoute
@@ -256,13 +255,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/qr-studio': {
-      id: '/qr-studio'
-      path: '/qr-studio'
-      fullPath: '/qr-studio'
-      preLoaderRoute: typeof QrStudioRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/reset-password': {
       id: '/reset-password'
       path: '/reset-password'
@@ -282,6 +274,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/qr-studio': {
+      id: '/_authenticated/qr-studio'
+      path: '/qr-studio'
+      fullPath: '/qr-studio'
+      preLoaderRoute: typeof AuthenticatedQrStudioRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/p/$slug': {
@@ -310,12 +309,14 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedQrStudioRoute: typeof AuthenticatedQrStudioRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAdminBusinessIdRoute: typeof AuthenticatedAdminBusinessIdRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedQrStudioRoute: AuthenticatedQrStudioRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   AuthenticatedAdminBusinessIdRoute: AuthenticatedAdminBusinessIdRoute,
 }
@@ -331,7 +332,6 @@ const rootRouteChildren: RootRouteChildren = {
   FaqRoute: FaqRoute,
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
-  QrStudioRoute: QrStudioRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   TermsRoute: TermsRoute,
   PSlugRoute: PSlugRoute,

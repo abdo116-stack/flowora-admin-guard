@@ -28,6 +28,7 @@ import {
   YAxis,
 } from "recharts";
 import { adminCreateUser, adminDeleteUser } from "@/lib/admin.functions";
+import { AdminSubscriptions } from "@/components/AdminSubscriptions";
 import { publicPortfolioUrl, SITE_URL, slugify, STATUS_LABEL, type UserStatus } from "@/lib/floword";
 
 export const Route = createFileRoute("/_authenticated/admin/")({
@@ -86,7 +87,7 @@ function AdminPage() {
           <BusinessesPanel />
         </TabsContent>
         <TabsContent value="subscriptions" className="mt-6">
-          <SubscriptionsPanel />
+          <AdminSubscriptions />
         </TabsContent>
       </Tabs>
     </AppShell>
