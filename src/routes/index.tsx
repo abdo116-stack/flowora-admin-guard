@@ -307,3 +307,33 @@ function Landing() {
     </div>
   );
 }
+
+function PriceCard({
+  title,
+  amount,
+  unit,
+  note,
+  badge,
+}: {
+  title: string;
+  amount: number;
+  unit: string;
+  note: string;
+  badge?: string;
+}) {
+  return (
+    <div className="surface p-6 text-center">
+      {badge ? (
+        <span className="mb-2 inline-block rounded-full bg-primary/15 px-3 py-1 text-xs font-semibold text-primary">
+          {badge}
+        </span>
+      ) : null}
+      <p className="font-semibold">{title}</p>
+      <p className="mt-2">
+        <span className="text-4xl font-bold">{amount}</span>{" "}
+        <span className="text-sm text-muted-foreground">{unit}</span>
+      </p>
+      <p className="mt-3 text-xs text-muted-foreground">{note}</p>
+    </div>
+  );
+}
