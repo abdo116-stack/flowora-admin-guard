@@ -9,4 +9,8 @@
 - [x] QR Design Studio is sign-in only; "Customize QR Code" button added in the portfolio editor
 - [x] Admin subscription management: statuses, activate/renew with automatic expiry, filters, summary
 - [x] Revenue tracking: confirmed payment records only, duplicates blocked
+- [ ] Add optional appointments with safe availability and owner management
+- [ ] Add service-specific WhatsApp requests and click tracking
+- [ ] Expand real admin/owner insights and QR-source attribution
+- [ ] Verify booking, WhatsApp, analytics access, and responsive flows
 - [ ] Further visual polish of landing page and shell (optional, on request)
