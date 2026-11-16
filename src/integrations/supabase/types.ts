@@ -17,21 +17,33 @@ export type Database = {
       analytics: {
         Row: {
           business_id: string
+          category: string | null
           created_at: string
           event_type: string
           id: string
+          service_id: string | null
+          source: string
+          visitor_id: string | null
         }
         Insert: {
           business_id: string
+          category?: string | null
           created_at?: string
           event_type: string
           id?: string
+          service_id?: string | null
+          source?: string
+          visitor_id?: string | null
         }
         Update: {
           business_id?: string
+          category?: string | null
           created_at?: string
           event_type?: string
           id?: string
+          service_id?: string | null
+          source?: string
+          visitor_id?: string | null
         }
         Relationships: [
           {
@@ -41,11 +53,80 @@ export type Database = {
             referencedRelation: "business_profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "analytics_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      appointment_requests: {
+        Row: {
+          blocked_until: string | null
+          business_id: string
+          created_at: string
+          customer_name: string
+          customer_phone: string
+          duration_minutes: number | null
+          id: string
+          note: string | null
+          scheduled_end: string | null
+          scheduled_start: string
+          service_id: string | null
+          status: string
+        }
+        Insert: {
+          blocked_until?: string | null
+          business_id: string
+          created_at?: string
+          customer_name: string
+          customer_phone: string
+          duration_minutes?: number | null
+          id?: string
+          note?: string | null
+          scheduled_end?: string | null
+          scheduled_start: string
+          service_id?: string | null
+          status?: string
+        }
+        Update: {
+          blocked_until?: string | null
+          business_id?: string
+          created_at?: string
+          customer_name?: string
+          customer_phone?: string
+          duration_minutes?: number | null
+          id?: string
+          note?: string | null
+          scheduled_end?: string | null
+          scheduled_start?: string
+          service_id?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "appointment_requests_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "business_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointment_requests_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
         ]
       }
       business_profiles: {
         Row: {
           address: string | null
+          booking_enabled: boolean
+          booking_settings: Json
           business_name: string
           cover_url: string | null
           created_at: string
@@ -74,6 +155,8 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          booking_enabled?: boolean
+          booking_settings?: Json
           business_name: string
           cover_url?: string | null
           created_at?: string
@@ -102,6 +185,8 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          booking_enabled?: boolean
+          booking_settings?: Json
           business_name?: string
           cover_url?: string | null
           created_at?: string
@@ -232,6 +317,7 @@ export type Database = {
           business_id: string
           created_at: string
           description: string | null
+          duration_minutes: number | null
           id: string
           image_url: string | null
           name: string
@@ -242,6 +328,7 @@ export type Database = {
           business_id: string
           created_at?: string
           description?: string | null
+          duration_minutes?: number | null
           id?: string
           image_url?: string | null
           name: string
@@ -252,6 +339,7 @@ export type Database = {
           business_id?: string
           created_at?: string
           description?: string | null
+          duration_minutes?: number | null
           id?: string
           image_url?: string | null
           name?: string
@@ -433,6 +521,22 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      booking_slot_is_open: {
+        Args: {
+          p_business_id: string
+          p_end: string
+          p_exclude_id?: string
+          p_start: string
+        }
+        Returns: boolean
+      }
+      get_booking_slots: {
+        Args: { _business_id: string; _date: string; _service_id: string }
+        Returns: {
+          duration_minutes: number
+          slot_start: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

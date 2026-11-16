@@ -69,3 +69,9 @@ export const SITE_URL = siteUrl();
 export function publicPortfolioUrl(slug: string): string {
   return `${siteUrl()}/p/${slug}`;
 }
+
+export function publicPortfolioQrUrl(slug: string): string {
+  const url = new URL(publicPortfolioUrl(slug));
+  url.searchParams.set("src", "qr");
+  return url.toString();
+}

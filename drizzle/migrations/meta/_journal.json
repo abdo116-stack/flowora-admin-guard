@@ -29,6 +29,13 @@
       "when": 1793491937669,
       "tag": "0003_subscription_payments",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1794835281368,
+      "tag": "0004_booking_requests_and_analytics",
+      "breakpoints": true
     }
   ]
 }
