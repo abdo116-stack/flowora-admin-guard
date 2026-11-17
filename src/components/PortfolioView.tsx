@@ -9,6 +9,8 @@ import { DAYS } from "@/lib/floword";
 import { designStyle, type Design, type SectionId, type ThemeId } from "@/lib/design";
 import { DICTS, LANGS, LANG_LABEL, type Lang } from "@/lib/portfolio-i18n";
 import { downloadVCard, isSafeHttpsUrl } from "@/lib/vcard";
+import { serviceWhatsAppUrl } from "@/lib/booking";
+import { PublicBookingPanel } from "@/components/BookingFeatures";
 
 export type PortfolioData = {
   business: {
@@ -32,8 +34,10 @@ export type PortfolioData = {
     external_review_url?: string | null;
     show_review_cta?: boolean | null;
     review_cta?: string | null;
+    booking_enabled?: boolean;
+    booking_settings?: unknown;
   };
-  services: { id: string; name: string; description: string | null; price: string | null; image_url?: string | null }[];
+  services: { id: string; name: string; description: string | null; price: string | null; image_url?: string | null; duration_minutes?: number | null }[];
   gallery: { id: string; image_url: string; caption: string | null }[];
   offers: { id: string; title: string; description: string | null; price: string | null; valid_until: string | null }[];
 };
@@ -74,7 +78,7 @@ export function PortfolioView({
   data: PortfolioData;
   design: Design;
   portfolioUrl: string;
-  onTrack?: (event: string) => void;
+  onTrack?: (event: string, details?: { serviceId?: string; category?: string }) => void;
   preview?: boolean;
 }) {
   const { business, services, gallery, offers } = data;
@@ -94,7 +98,7 @@ export function PortfolioView({
   const rules = THEME_RULES[design.theme];
   const card = `${CARD[design.cardStyle]} rounded-[var(--radius)]`;
   const gap = SPACING[design.spacing];
-  const track = (e: string) => onTrack?.(e);
+  const track = (e: string, details?: { serviceId?: string; category?: string }) => onTrack?.(e, details);
   const hours = (business.opening_hours ?? {}) as Record<string, string>;
   const btn = "inline-flex items-center justify-center gap-2 rounded-[var(--radius)] px-4 py-2.5 text-sm font-medium transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
   const btnPrimary = `${btn} bg-primary text-primary-foreground`;
@@ -158,13 +162,21 @@ export function PortfolioView({
           <H>{t.services}</H>
           <div className="mt-4 space-y-3">
             {services.map((s) => (
-              <div key={s.id} className={`${card} flex items-center gap-4 p-4`}>
+              <div key={s.id} className={`${card} flex flex-wrap items-center gap-4 p-4`}>
                 {s.image_url ? <Media path={s.image_url} alt={s.name} className="h-16 w-16 shrink-0 rounded-[var(--radius)] object-cover" /> : null}
                 <div className="min-w-0 flex-1">
                   <p className="font-medium">{s.name}</p>
                   {s.description ? <p className="text-sm text-muted-foreground">{s.description}</p> : null}
                 </div>
                 {s.price ? <span className="whitespace-nowrap font-semibold text-primary">{s.price}</span> : null}
+                {business.whatsapp ? (() => {
+                  const link = serviceWhatsAppUrl(business.whatsapp, business.business_name, s.name, s.price);
+                  return link ? (
+                    <a className={`${btnOutline} min-h-11 w-full sm:ms-auto sm:w-auto`} href={link} target="_blank" rel="noopener noreferrer" onClick={() => track("service_whatsapp_click", { serviceId: s.id, category: "service" })}>
+                      <MessageCircle className="h-4 w-4" aria-hidden />{lang === "ar" ? "اطلب عبر واتساب" : lang === "fr" ? "Commander sur WhatsApp" : "Order via WhatsApp"}
+                    </a>
+                  ) : null;
+                })() : null}
               </div>
             ))}
           </div>
@@ -240,9 +252,9 @@ export function PortfolioView({
         <section className={gap}>
           <H>{t.social}</H>
           <div className={`mt-4 flex flex-wrap gap-2 ${center ? "justify-center" : ""}`}>
-            {business.instagram ? <a className={btnOutline} href={business.instagram} target="_blank" rel="noopener noreferrer"><Instagram className="h-4 w-4" aria-hidden />Instagram</a> : null}
-            {business.facebook ? <a className={btnOutline} href={business.facebook} target="_blank" rel="noopener noreferrer"><Facebook className="h-4 w-4" aria-hidden />Facebook</a> : null}
-            {business.tiktok ? <a className={btnOutline} href={business.tiktok} target="_blank" rel="noopener noreferrer"><Music2 className="h-4 w-4" aria-hidden />TikTok</a> : null}
+            {business.instagram ? <a className={btnOutline} href={business.instagram} target="_blank" rel="noopener noreferrer" onClick={() => track("instagram_click", { category: "social" })}><Instagram className="h-4 w-4" aria-hidden />Instagram</a> : null}
+            {business.facebook ? <a className={btnOutline} href={business.facebook} target="_blank" rel="noopener noreferrer" onClick={() => track("facebook_click", { category: "social" })}><Facebook className="h-4 w-4" aria-hidden />Facebook</a> : null}
+            {business.tiktok ? <a className={btnOutline} href={business.tiktok} target="_blank" rel="noopener noreferrer" onClick={() => track("tiktok_click", { category: "social" })}><Music2 className="h-4 w-4" aria-hidden />TikTok</a> : null}
           </div>
         </section>
       ) : null,
@@ -287,13 +299,17 @@ export function PortfolioView({
           ) : null}
           {business.google_maps_url ? <a className={btnOutline} href={business.google_maps_url} target="_blank" rel="noopener noreferrer" onClick={() => track("maps_click")}><MapPin className="h-4 w-4" aria-hidden />{t.directions}</a> : null}
           {business.website ? <a className={btnOutline} href={business.website} target="_blank" rel="noopener noreferrer" onClick={() => track("website_click")}><Globe className="h-4 w-4" aria-hidden />{t.website}</a> : null}
-          {business.email ? <a className={btnOutline} href={`mailto:${business.email}`}><Mail className="h-4 w-4" aria-hidden />{t.email}</a> : null}
+          {business.email ? <a className={btnOutline} href={`mailto:${business.email}`} onClick={() => track("email_click", { category: "contact" })}><Mail className="h-4 w-4" aria-hidden />{t.email}</a> : null}
           <button type="button" className={`${btn} bg-accent text-accent-foreground`} onClick={() => void saveContact()}>
             <UserPlus className="h-4 w-4" aria-hidden />{t.saveContact}
           </button>
         </div>
 
         {design.sections.filter((s) => s.visible).map((s) => <div key={s.id}>{sections[s.id]}</div>)}
+
+        {business.booking_enabled ? (
+          <PublicBookingPanel businessId={business.id} businessName={business.business_name} services={services} settings={business.booking_settings} />
+        ) : null}
 
         <footer className="mt-16 border-t border-border pt-6 text-center text-xs text-muted-foreground">
           {t.poweredBy}{" "}

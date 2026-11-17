@@ -9,6 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { formatBookingTime, localDateInTimezone } from "@/lib/booking";
+import { DEFAULT_BOOKING_SETTINGS, parseBookingSettings, type BookingSettings } from "@/lib/booking";
+import { Switch } from "@/components/ui/switch";
 
 const requestSchema = z.object({
   customer_name: z.string().trim().min(1, "Enter your name").max(120),
@@ -268,5 +270,89 @@ export function BusinessBookings({
         </div>
       ) : <p className="surface p-5 text-sm text-muted-foreground">No appointment requests match these filters.</p>}
     </section>
+  );
+}
+
+export function BookingSetupPanel({ businessId }: { businessId: string }) {
+  const queryClient = useQueryClient();
+  const { data: business, isLoading } = useQuery({
+    queryKey: ["booking-setup", businessId],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("business_profiles")
+        .select("booking_enabled, booking_settings, opening_hours").eq("id", businessId).single();
+      if (error) throw error;
+      return data;
+    },
+  });
+  const [enabled, setEnabled] = useState(false);
+  const [settings, setSettings] = useState<BookingSettings>(DEFAULT_BOOKING_SETTINGS);
+  const [hours, setHours] = useState<Record<string, string>>({});
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    if (!business || loaded) return;
+    setEnabled(business.booking_enabled);
+    setSettings(parseBookingSettings(business.booking_settings));
+    setHours((business.opening_hours && typeof business.opening_hours === "object" ? business.opening_hours : {}) as Record<string, string>);
+    setLoaded(true);
+  }, [business, loaded]);
+
+  const save = useMutation({
+    mutationFn: async () => {
+      const validation = z.object({
+        timezone: z.string().min(1).max(80),
+        minimum_notice_hours: z.number().int().min(0).max(720),
+        buffer_minutes: z.number().int().min(0).max(240),
+        slot_interval_minutes: z.number().int().min(5).max(120),
+      }).safeParse(settings);
+      if (!validation.success) throw new Error("Check the timezone, notice, buffer, and interval values");
+      try { new Intl.DateTimeFormat(undefined, { timeZone: settings.timezone }); }
+      catch { throw new Error("Enter a valid timezone, for example Africa/Casablanca"); }
+      const { error } = await supabase.from("business_profiles").update({
+        booking_enabled: enabled,
+        booking_settings: settings,
+        opening_hours: hours,
+      }).eq("id", businessId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Appointment settings saved");
+      void queryClient.invalidateQueries({ queryKey: ["booking-setup", businessId] });
+      void queryClient.invalidateQueries({ queryKey: ["business", businessId] });
+    },
+    onError: (error) => toast.error(error instanceof Error ? error.message : "Could not save appointment settings"),
+  });
+
+  if (isLoading || !business) return <p className="text-sm text-muted-foreground">Loading appointment settings…</p>;
+
+  const updateNumber = (key: "minimum_notice_hours" | "buffer_minutes" | "slot_interval_minutes", value: string) => {
+    const parsed = Number(value);
+    if (Number.isInteger(parsed)) setSettings((current) => ({ ...current, [key]: parsed }));
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="surface flex flex-wrap items-center justify-between gap-4 p-5">
+        <div><h2 className="font-semibold">Appointment requests</h2><p className="mt-1 text-sm text-muted-foreground">Visitors can request a time; you confirm each appointment.</p></div>
+        <div className="flex items-center gap-3"><Label htmlFor="booking-enabled">Accept requests</Label><Switch id="booking-enabled" checked={enabled} onCheckedChange={setEnabled} /></div>
+      </div>
+      <div className="surface space-y-5 p-5">
+        <h3 className="font-semibold">Hours and availability</h3>
+        <div className="grid gap-3 sm:grid-cols-2">
+          {(["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"] as const).map((day) => (
+            <div key={day} className="space-y-1.5"><Label htmlFor={`booking-hours-${day}`} className="capitalize">{day}</Label><Input id={`booking-hours-${day}`} placeholder="09:00-18:00 or Closed" value={hours[day] ?? ""} onChange={(event) => setHours((current) => ({ ...current, [day]: event.target.value }))} /></div>
+          ))}
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="space-y-1.5"><Label htmlFor="booking-timezone">Business timezone</Label><Input id="booking-timezone" value={settings.timezone} onChange={(event) => setSettings((current) => ({ ...current, timezone: event.target.value }))} /></div>
+          <div className="space-y-1.5"><Label htmlFor="booking-notice">Minimum notice (hours)</Label><Input id="booking-notice" type="number" min="0" max="720" value={settings.minimum_notice_hours} onChange={(event) => updateNumber("minimum_notice_hours", event.target.value)} /></div>
+          <div className="space-y-1.5"><Label htmlFor="booking-buffer">Buffer after appointments (minutes)</Label><Input id="booking-buffer" type="number" min="0" max="240" value={settings.buffer_minutes} onChange={(event) => updateNumber("buffer_minutes", event.target.value)} /></div>
+          <div className="space-y-1.5"><Label htmlFor="booking-interval">Available start-time interval (minutes)</Label><Input id="booking-interval" type="number" min="5" max="120" value={settings.slot_interval_minutes} onChange={(event) => updateNumber("slot_interval_minutes", event.target.value)} /></div>
+        </div>
+        <p className="text-xs text-muted-foreground">Use a timezone such as Africa/Casablanca. Breaks can be added to the opening-hours settings as part of the configured schedule.</p>
+        <Button disabled={save.isPending} onClick={() => save.mutate()}>{save.isPending ? "Saving…" : "Save appointment settings"}</Button>
+      </div>
+      <BusinessBookings businessId={businessId} timezone={settings.timezone} />
+    </div>
   );
 }
